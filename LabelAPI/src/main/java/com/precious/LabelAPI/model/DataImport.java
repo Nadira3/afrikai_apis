@@ -4,12 +4,15 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+
 import com.precious.LabelAPI.model.enums.FileType;
 import com.precious.LabelAPI.model.enums.ImportStatus;
+import com.precious.LabelAPI.util.FileManagerUtil;
 
 
 /**
@@ -25,6 +28,9 @@ public class DataImport {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(name = "client_id", nullable = false)
+    private UUID clientId;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
@@ -61,17 +67,14 @@ public class DataImport {
     // The fileType field is set to the file type of the imported file
     public DataImport(
         String fileName,
-        String filePath,
-        FileType fileType,
-        List<PromptResponsePair> promptResponsePairs
+        FileType filetype
     ) {
         this.fileName = fileName;
-        this.filePath = filePath;
+        this.filePath = FileManagerUtil.getCurrentDirectoryFile(fileName).getAbsolutePath();
         this.fileType = fileType;
         this.importedAt = LocalDateTime.now();
-        this.importStatus = ImportStatus.PENDING;
+        this.promptResponsePairs = new ArrayList<>(promptResponsePairs);
         this.processedRecords = 0;
         this.totalRecords = promptResponsePairs.size();
-        this.promptResponsePairs = promptResponsePairs;
     }
 }
