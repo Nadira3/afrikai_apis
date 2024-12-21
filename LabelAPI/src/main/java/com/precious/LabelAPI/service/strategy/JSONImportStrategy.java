@@ -22,8 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 * @See PromptResponsePair
 */
 
-@Component
-@Slf4j
+@Component // marks the class as a Spring Bean so it can be injected into other components
+@Slf4j // Lombok annotation to generate a logger field
 public class JSONImportStrategy extends BaseImportStrategy {
     private final ObjectMapper objectMapper;
 
@@ -32,13 +32,33 @@ public class JSONImportStrategy extends BaseImportStrategy {
     }
 
     @Override
+    // Returns the supported file type
     public FileType getSupportedFileType() {
         return FileType.JSON;
     }
 
     @Override
+    /**
+     * Validate the JSON file
+     * - Check file size
+     *   - If the file size is too large, throw an exception
+     *   - If the file size is within the limits, continue with the validation
+     *
+     * - Read the JSON content
+     *   - If the content is not an array, throw an exception
+     *   - If the content is an array, continue with the validation
+     *
+     * - Validate the array size
+     *   - If the array size is not within the limits, throw an exception
+     *   - If the array size is within the limits, continue with the validation
+     *
+     * - Validate the structure of each entry
+     *   - If an entry does not contain 'prompt' and 'response' fields, throw an exception
+     *   - If all entries are valid, return true
+     *   - If any validation fails, return false
+     */
     public boolean validateFile(MultipartFile file) {
-        Timer.Sample sample = Timer.start(meterRegistry);
+        Timer.Sample sample = Timer.start(meterRegistry); // Start a timer to record the validation time
         try {
             validateFileSize(file);
             
@@ -62,24 +82,57 @@ public class JSONImportStrategy extends BaseImportStrategy {
                 if (!entry.has("prompt") || !entry.has("response")) {
                     throw new FileValidationException("Each entry must contain 'prompt' and 'response' fields");
                 }
+		if (entry.has("metadata") && !entry.get("metadata").isObject()) {
+		    throw new FileValidationException("Metadata must be a valid JSON object");
+		}
             }
 
             return true;
         } catch (IOException e) {
-            logProcessingError("JSON validation failed", e);
+            logProcessingError("JSON validation failed due to IO error", e);
             return false;
+	} catch (FileValidationException e) {
+	    logProcessingError("File validation failed", e);
+        Timer.Sample sample = Timer.start(meterRegistry);
+	    return false;
         } finally {
             sample.stop(meterRegistry.timer("import.validation.time", "type", "json"));
         }
     }
 
     @Override
+    /**
+     * Process the JSON file
+     * - Read the JSON content
+     * - For each entry in the JSON array
+     *   - Create a new PromptResponsePair object
+     *   - Set the prompt, response, and metadata fields
+     *   - Validate the pair
+     *   - Add the pair to the list of pairs
+     * - Record metrics for processed and error rows
+     * - Return the list of pairs
+     */
     public List<PromptResponsePair> processImport(MultipartFile file, DataImport dataImport) {
-        Timer.Sample sample = Timer.start(meterRegistry);
+        Timer.Sample sample = Timer.start(meterRegistry); // Start a timer to record the processing time
         List<PromptResponsePair> pairs = new ArrayList<>();
         AtomicInteger processedRows = new AtomicInteger(0);
         AtomicInteger errorRows = new AtomicInteger(0);
 
+	/**
+	 * @See CSVImportStrategy.java for a detailed explanation of the processImport method
+	 * The JSON import strategy follows a similar process, but with JSON-specific logic
+	 * The JSON content is read as a tree structure, and each entry is processed as a JSON object
+	 * The prompt and response fields are extracted from each entry and used to create a PromptResponsePair object
+	 * Additional metadata is extracted if available
+	 * The pair is validated and added to the list of pairs
+	 * Metrics are recorded for processed and error rows
+	 * The list of pairs is returned
+	 *
+	 * @See BaseImportStrategy.java for the validatePair method
+	 * @See PromptResponsePair.java for the PromptResponsePair model
+	 * @See ProcessingStatus.java for the ProcessingStatus enum
+	 * @See FileProcessingException.java for the FileProcessingException class
+	 */
         try {
             JsonNode rootNode = objectMapper.readTree(file.getInputStream());
             

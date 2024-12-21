@@ -1,0 +1,25 @@
+@startuml
+
+[*] --> DataImportController : Client Upload Request
+DataImportController --> DataImportService : Process Data Import
+
+DataImportService --> ExternalEntityService : Validate Client
+ExternalEntityService --> DataImportService : Return Client Validation Result
+
+DataImportService --> DataImportStrategy : Choose Strategy
+DataImportStrategy --> DataImportService : Return Strategy Selection
+
+DataImportService --> FileValidator : Validate File
+FileValidator --> DataImportService : Return Validation Result
+
+DataImportService --> FileParser : Parse File
+FileParser --> DataImportService : Return Parsed Data
+
+DataImportService --> DataImportRepository : Save Import Metadata
+DataImportService --> PromptResponsePairRepository : Save Prompt-Response Pairs
+
+DataImportService --> DataImportResponseDto : Return Import Response
+
+DataImportService --> ErrorHandler : Handle Errors
+
+@enduml

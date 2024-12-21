@@ -9,6 +9,9 @@ package com.precious.LabelAPI.service.strategy;
 * @see BaseImportStrategy
 * @See FileType
 * @See PromptResponsePair
+*
+* @See CSVImportStrategy and @See JSONImportStrategy for similar implementations
+* and annotations overview.
 */
 
 @Component
@@ -27,6 +30,30 @@ public class ExcelImportStrategy extends BaseImportStrategy {
         try {
             validateFileSize(file);
             
+	    /**
+	     * WorkbookFactory.create() is a method from Apache POI library
+	     * that creates a new instance of a Workbook from an InputStream.
+	     *
+	     * The Workbook object represents the entire Excel document.
+	     * It contains one or more sheets, which in turn contain rows and cells.
+	     *
+	     * The Workbook object is closed automatically when the try-with-resources block ends.
+	     * This ensures that the workbook is closed even if an exception occurs.
+	     *
+	     * The Sheet object represents a single sheet within the workbook.
+	     * It contains rows and cells, and can be accessed by index or name.
+	     *
+	     * The Row object represents a single row within a sheet.
+	     * It contains cells, which can be accessed by index or name.
+	     *
+	     * The Cell object represents a single cell within a row.
+	     * It contains a value, which can be a string, number, boolean, or formula.
+	     *
+	     * The Workbook, Sheet, Row, and Cell objects are all interfaces.
+	     *
+	     * The WorkbookFactory.create() method throws an exception if the file is not a valid Excel file.
+	     * The exception is caught and logged, and the method returns false.
+	     */
             try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
                 Sheet sheet = workbook.getSheetAt(0);
                 Row headerRow = sheet.getRow(0);
@@ -72,6 +99,8 @@ public class ExcelImportStrategy extends BaseImportStrategy {
         AtomicInteger processedRows = new AtomicInteger(0);
         AtomicInteger errorRows = new AtomicInteger(0);
 
+	try {
+		validateFile(file);
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             Row headerRow = sheet.getRow(0);
@@ -100,6 +129,7 @@ public class ExcelImportStrategy extends BaseImportStrategy {
 
                     // Handle additional columns if present
                     if (headerMap.containsKey("metadata")) {
+			    log.info("Metadata column found, including metadata in import");
                         pair.setMetadata(getCellValue(row.getCell(headerMap.get("metadata"))));
                     }
 
@@ -114,6 +144,7 @@ public class ExcelImportStrategy extends BaseImportStrategy {
             recordMetrics("import.processed.rows", processedRows.get());
             recordMetrics("import.error.rows", errorRows.get());
 
+	    log.info("Processed {} rows with {} errors", processedRows.get(), errorRows.get());
             return pairs;
         } catch (Exception e) {
             logProcessingError("Excel processing failed", e);
@@ -121,8 +152,20 @@ public class ExcelImportStrategy extends BaseImportStrategy {
         } finally {
             sample.stop(meterRegistry.timer("import.processing.time", "type", "excel"));
         }
+	} catch (FileValidationException e) {
+		logProcessingError("Excel validation failed", e);
+		throw new FileProcessingException("Failed to process Excel file: " + e.getMessage());
+	} catch (Exception e) {
+		logProcessingError("Excel processing failed", e);
+		throw new FileProcessingException("Failed to process Excel file: " + e.getMessage());
+	}
     }
 
+    /**
+     * Get cell value as a string
+     * @param cell the cell to get the value from
+     * @return the cell value as a string
+     */
     private String getCellValue(Cell cell) {
         if (cell == null) return "";
         
