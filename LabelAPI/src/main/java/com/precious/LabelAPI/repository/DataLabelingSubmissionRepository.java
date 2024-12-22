@@ -1,6 +1,12 @@
 package com.precious.LabelAPI.repository;
 
 import com.precious.LabelAPI.model.DataLabelingSubmission;
+import com.precious.LabelAPI.model.PromptResponsePair;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.precious.LabelAPI.exceptions.FileValidationException;
+
 
 // Abstract base strategy with common functionality
 @Slf4j

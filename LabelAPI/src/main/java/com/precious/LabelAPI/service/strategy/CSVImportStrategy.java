@@ -1,25 +1,32 @@
 package com.precious.LabelAPI.service.strategy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.precious.LabelAPI.model.DataImport;
 import com.precious.LabelAPI.model.PromptResponsePair;
 import com.precious.LabelAPI.model.enums.FileType;
 import com.precious.LabelAPI.model.enums.ProcessingStatus;
-import com.precious.LabelAPI.service.exception.FileProcessingException;
-import com.precious.LabelAPI.service.exception.FileValidationException;
-import com.precious.LabelAPI.service.exception.ValidationException;
+import com.precious.LabelAPI.exceptions.FileProcessingException;
+import com.precious.LabelAPI.exceptions.FileValidationException;
+
 
 import com.opencsv.CSVReader;
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.micrometer.core.instrument.Timer;
-import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.validation.ValidationException;
 
 
 // CSV Implementation of the DataImportStrategy
@@ -28,10 +35,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 @Slf4j // Added this annotation to enable logging
 public class CSVImportStrategy extends BaseImportStrategy {
     private static final String[] REQUIRED_HEADERS = {"prompt", "response"}; // This ensures the file format matches expectations
-    @Autowired
-    private final ObjectMapper objectMapper;
-
-    @Override // This annotation is used to indicate that the method is an override of the parent class
+    
     /**
      * Indicates the supported file type for this strategy.
      * 

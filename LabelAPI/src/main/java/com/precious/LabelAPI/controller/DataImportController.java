@@ -24,7 +24,7 @@ public class DataImportController {
 
     // Autowire the DataImportService
     @Autowired
-    private final DataImportService dataImportService;
+    private DataImportService dataImportService;
 
     @PostMapping("/upload")
     public ResponseEntity<?> importData(@Valid @ModelAttribute DataImportRequestDto dataImportRequestDto) {

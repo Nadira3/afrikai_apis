@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
@@ -24,4 +26,7 @@ public class DataImportRequestDto {
 
     @NotNull(message = "File is required")
     private MultipartFile file;
+
+    @NotBlank(message = "Client ID is required")
+    private UUID clientId;
 }

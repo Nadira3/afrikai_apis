@@ -1,7 +1,7 @@
 package com.precious.LabelAPI.dto;
 
 import com.precious.LabelAPI.model.DataImport;
-import com.precious.LabelAPI.model.ImportStatus;
+import com.precious.LabelAPI.model.enums.ImportStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

@@ -56,4 +56,9 @@ public class PromptResponsePair {
 	this.originalRowNumber = originalRowNumber;
 	this.processingStatus = ProcessingStatus.PENDING;
     }
+
+    public void setMetadata(String cellValue) {
+        // method to set metadata of prompt-response pair if available
+        
+    }
 }

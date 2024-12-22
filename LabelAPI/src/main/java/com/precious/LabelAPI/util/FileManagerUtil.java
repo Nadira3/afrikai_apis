@@ -1,7 +1,10 @@
 package com.precious.LabelAPI.util;
 
 import java.io.File;
-import java.io.IOException;
+import org.apache.commons.io.FilenameUtils;
+
+import com.precious.LabelAPI.exceptions.UnsupportedFileTypeException;
+import com.precious.LabelAPI.model.enums.FileType;
 
 /**
  * Utility class for file path operations
@@ -20,7 +23,7 @@ public class FileManagerUtil {
     /**
      * Determines file type from filename
      */
-    public FileType determineFileType(String filename) {
+    public static FileType determineFileType(String filename) {
         String extension = FilenameUtils.getExtension(filename).toLowerCase();
         return switch (extension) {
             case "csv" -> FileType.CSV;

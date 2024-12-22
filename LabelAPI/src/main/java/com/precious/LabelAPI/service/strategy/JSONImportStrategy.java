@@ -4,10 +4,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.precious.LabelAPI.model.DataImport;
 import com.precious.LabelAPI.model.PromptResponsePair;
-import com.precious.LabelAPI.model.ProcessingStatus;
-import com.precious.LabelAPI.service.exception.FileProcessingException;
-import com.precious.LabelAPI.service.exception.FileValidationException;
+import com.precious.LabelAPI.model.enums.FileType;
+import com.precious.LabelAPI.model.enums.ProcessingStatus;
+
+import io.micrometer.core.instrument.Timer;
+import jakarta.validation.ValidationException;
+
+import com.precious.LabelAPI.exceptions.FileProcessingException;
+import com.precious.LabelAPI.exceptions.FileValidationException;
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,7 +105,6 @@ public class JSONImportStrategy extends BaseImportStrategy {
             return false;
 	} catch (FileValidationException e) {
 	    logProcessingError("File validation failed", e);
-        Timer.Sample sample = Timer.start(meterRegistry);
 	    return false;
         } finally {
             sample.stop(meterRegistry.timer("import.validation.time", "type", "json"));
@@ -167,6 +178,27 @@ public class JSONImportStrategy extends BaseImportStrategy {
             throw new FileProcessingException("Failed to process JSON file: " + e.getMessage());
         } finally {
             sample.stop(meterRegistry.timer("import.processing.time", "type", "json"));
+        }
+    }
+
+    /**
+     * Validates the prompt and response fields of a PromptResponsePair.
+     * Throws ValidationException if the pair is invalid.
+     * 
+     * @param pair the PromptResponsePair to validate
+     */
+    private void validatePair(PromptResponsePair pair) {
+        if (StringUtils.isBlank(pair.getPrompt())) {
+            throw new ValidationException("Prompt cannot be empty");
+        }
+        if (StringUtils.isBlank(pair.getResponse())) {
+            throw new ValidationException("Response cannot be empty");
+        }
+        if (pair.getPrompt().length() > 4000) {
+            throw new ValidationException("Prompt exceeds maximum length of 4000 characters");
+        }
+        if (pair.getResponse().length() > 8000) {
+            throw new ValidationException("Response exceeds maximum length of 8000 characters");
         }
     }
 }

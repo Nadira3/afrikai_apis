@@ -2,6 +2,7 @@ package com.precious.LabelAPI.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,7 +72,7 @@ public class DataImport {
     ) {
         this.fileName = fileName;
         this.filePath = FileManagerUtil.getCurrentDirectoryFile(fileName).getAbsolutePath();
-        this.fileType = fileType;
+        this.fileType = filetype;
         this.importedAt = LocalDateTime.now();
         this.promptResponsePairs = new ArrayList<>(promptResponsePairs);
         this.processedRecords = 0;

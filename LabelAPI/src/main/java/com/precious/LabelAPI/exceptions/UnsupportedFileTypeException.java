@@ -1,4 +1,4 @@
-pacakge com.precious.LabelAPI.exceptions;
+package com.precious.LabelAPI.exceptions;
 
 // Exception for unsupported file types
 public class UnsupportedFileTypeException extends RuntimeException {

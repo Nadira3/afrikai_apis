@@ -1,6 +1,8 @@
 package com.precious.LabelAPI.repository;
 
 import com.precious.LabelAPI.model.DataImport;
+import com.precious.LabelAPI.model.enums.ImportStatus;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

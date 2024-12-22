@@ -1,5 +1,37 @@
 package com.precious.LabelAPI.service.strategy;
 
+import static com.precious.LabelAPI.service.strategy.BaseImportStrategy.*;
+
+import io.micrometer.core.instrument.Timer;
+import jakarta.validation.ValidationException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.precious.LabelAPI.exceptions.FileProcessingException;
+import com.precious.LabelAPI.exceptions.FileValidationException;
+import com.precious.LabelAPI.model.DataImport;
+import com.precious.LabelAPI.model.PromptResponsePair;
+import com.precious.LabelAPI.model.enums.FileType;
+import com.precious.LabelAPI.model.enums.ProcessingStatus;
+
+import lombok.extern.slf4j.Slf4j;
+
 /**
 * Excel Import Strategy Implementation
 * This class is responsible for handling Excel file imports.
@@ -182,5 +214,26 @@ public class ExcelImportStrategy extends BaseImportStrategy {
             }
             default -> "";
         };
+    }
+
+    /**
+     * Validates the prompt and response fields of a PromptResponsePair.
+     * Throws ValidationException if the pair is invalid.
+     * 
+     * @param pair the PromptResponsePair to validate
+     */
+    private void validatePair(PromptResponsePair pair) {
+        if (StringUtils.isBlank(pair.getPrompt())) {
+            throw new ValidationException("Prompt cannot be empty");
+        }
+        if (StringUtils.isBlank(pair.getResponse())) {
+            throw new ValidationException("Response cannot be empty");
+        }
+        if (pair.getPrompt().length() > 4000) {
+            throw new ValidationException("Prompt exceeds maximum length of 4000 characters");
+        }
+        if (pair.getResponse().length() > 8000) {
+            throw new ValidationException("Response exceeds maximum length of 8000 characters");
+        }
     }
 }

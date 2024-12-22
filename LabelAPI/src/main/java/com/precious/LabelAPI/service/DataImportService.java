@@ -1,5 +1,6 @@
 package com.precious.LabelAPI.service;
 
+import com.precious.LabelAPI.dto.DataImportRequestDto;
 import com.precious.LabelAPI.dto.DataImportResponseDto;
 import com.precious.LabelAPI.model.enums.FileType;
 import com.precious.LabelAPI.model.enums.ImportStatus;
@@ -10,22 +11,18 @@ import com.precious.LabelAPI.model.PromptResponsePair;
 import com.precious.LabelAPI.repository.DataImportRepository;
 import com.precious.LabelAPI.repository.PromptResponsePairRepository;
 import com.precious.LabelAPI.service.strategy.DataImportStrategy;
-import com.precious.LabelAPI.service.external.ExternalEntityService;
 import com.precious.LabelAPI.util.FileManagerUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -51,7 +48,6 @@ public class DataImportService {
     private final DataImportRepository dataImportRepository;
     private final PromptResponsePairRepository promptResponsePairRepository;
 
-    @Autowired
     public DataImportService(
         List<DataImportStrategy> strategies,
         ExternalEntityService externalEntityService,
@@ -98,7 +94,10 @@ public class DataImportService {
      * 6. Returns import response
      */
     // The method processes a file upload request for a specific client and returns the result wrapped in Mono.
-    public Mono<DataImportResponseDto> importData(MultipartFile file, UUID clientId) {
+    public Mono<?> importData(DataImportRequestDto requestDto) {
+        MultipartFile file = requestDto.getFile();
+        UUID clientId = requestDto.getClientId();
+
         return externalEntityService.getClientReference(clientId)
             .flatMap(client -> {
                 try {
@@ -108,7 +107,7 @@ public class DataImportService {
 
 		    // If the file type is not supported, an UnsupportedFileTypeException is thrown.
                     if (strategy == null) {
-                        return Mono.error(new UnsupportedFileTypeException(fileType));
+                        return Mono.error(new UnsupportedFileTypeException(fileType.name()));
                     }
 
                     // Create import record
@@ -163,7 +162,7 @@ public class DataImportService {
             return DataImportResponseDto.fromEntity(dataImport);
         }).doOnError(e -> {
             log.error("Error processing import {}: {}", dataImport.getId(), e.getMessage());
-            updateImportStatus(dataImport, ImportStatus.FAILED, e.getMessage());
+            updateImportStatus(dataImport, ImportStatus.FAILED);
         });
     }
 
