@@ -7,7 +7,6 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import com.precious.LabelAPI.model.enums.ProcessingStatus;
-import com.precious.LabelAPI.model.DataImport;
 
 /**
  * Represents a single prompt-response pair for labeling

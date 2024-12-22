@@ -23,8 +23,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class DataImportController {
 
     // Autowire the DataImportService
+    private final DataImportService dataImportService;
+
     @Autowired
-    private DataImportService dataImportService;
+    public DataImportController(DataImportService dataImportService) {
+        this.dataImportService = dataImportService;
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<?> importData(@Valid @ModelAttribute DataImportRequestDto dataImportRequestDto) {
