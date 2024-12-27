@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.precious.UserApi.dto.user.UserCreationDto;
+import com.precious.UserApi.dto.user.UserRequestDto;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.repository.UserRepository;
@@ -19,6 +20,7 @@ import com.precious.UserApi.model.user.Tasker;
 import com.precious.UserApi.model.user.User;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,13 +129,26 @@ public class UserService implements IUserService {
         return userRepository.findAll(pageable);
     }
 
-    public UserResponseDto updateUser(Long userId, User updatedUser) {
+    public UserResponseDto updateUser(Long userId, UserRequestDto updatedUser) {
         return userRepository.findById(userId)
             .map(existingUser -> {
-                existingUser.setUsername(updatedUser.getUsername());
-                existingUser.setEmail(updatedUser.getEmail());
-                existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword())); // Hash the password
-                existingUser.setRole(updatedUser.getRole()); // Update roles if needed
+                existingUser.setUsername(
+                    Optional.ofNullable(updatedUser.getUsername())
+                            .map(username -> username) // If present, map it to the value
+                            .orElse(existingUser.getUsername())
+                );
+
+                existingUser.setEmail(
+                    Optional.ofNullable(updatedUser.getEmail())
+                            .map(email -> email)
+                            .orElse(existingUser.getEmail())
+
+                );
+                existingUser.setPassword(
+                    Optional.ofNullable(updatedUser.getPassword())
+                            .map(password -> passwordEncoder.encode(updatedUser.getPassword()))
+                            .orElse(existingUser.getPassword())
+                );
                 return userRepository.save(existingUser).toUserResponseDto();
             })
             .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));

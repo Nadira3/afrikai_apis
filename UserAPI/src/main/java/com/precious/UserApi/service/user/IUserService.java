@@ -3,6 +3,7 @@ package com.precious.UserApi.service.user;
 import com.precious.UserApi.dto.user.UserCreationDto;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
+import com.precious.UserApi.dto.user.UserRequestDto;
 import com.precious.UserApi.model.enums.UserRole;
 import com.precious.UserApi.model.user.User;
 
@@ -19,7 +20,7 @@ public interface IUserService {
 
     // User Management
     User getUserById(Long id);
-    UserResponseDto updateUser(Long userId, User userDetails);
+    UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto);
     void deleteUser(Long userId);
     Page<User> getAllUsers(Pageable pageable);
 

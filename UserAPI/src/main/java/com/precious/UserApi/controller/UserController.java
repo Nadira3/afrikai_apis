@@ -1,6 +1,7 @@
 package com.precious.UserApi.controller;
 
 import com.precious.UserApi.dto.user.UserCreationDto;
+import com.precious.UserApi.dto.user.UserRequestDto;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.model.enums.UserRole;
@@ -43,8 +44,7 @@ public class UserController {
         Page<User> userPage = userService.getAllUsers(pageable);
 
         // Convert User entities to UserDto
-        Page<UserResponseDto> userDtoPage = userPage
-                                                .map(user -> new UserResponseDto(user.getId(), user.getUsername(), user.getEmail()));
+        Page<UserResponseDto> userDtoPage = userPage.map(User::toUserResponseDto);
 
         return ResponseEntity.ok(userDtoPage.getContent());
     }
@@ -79,9 +79,9 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDto> updateUser(
         @PathVariable Long userId,
-        @RequestBody User userDetails
+        @RequestBody UserRequestDto userRequestDto
     ) {
-        UserResponseDto updatedUserDto = userService.updateUser(userId, userDetails);
+        UserResponseDto updatedUserDto = userService.updateUser(userId, userRequestDto);
         return new ResponseEntity<>(updatedUserDto, HttpStatus.OK);
     }
 
