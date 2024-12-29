@@ -53,6 +53,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserResponseDto> registerUser(
         @Valid @RequestBody UserRegistrationDto registrationDto,
+        
         UriComponentsBuilder uriComponentsBuilder
     ) {
         UserResponseDto registeredUserDto = userService.registerUser(registrationDto);

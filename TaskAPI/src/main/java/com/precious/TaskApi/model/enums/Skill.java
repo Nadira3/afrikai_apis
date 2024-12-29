@@ -1,0 +1,16 @@
+package com.precious.TaskApi.model.enums;
+
+public enum Skill {
+    JAVA,
+    PYTHON,
+    DATA_ANALYSIS,
+    WEB_DEVELOPMENT,
+    PROJECT_MANAGEMENT,
+    GRAPHIC_DESIGN,
+    DATABASE_MANAGEMENT,
+    CLOUD_COMPUTING,
+    MACHINE_LEARNING,
+    CONTENT_WRITING,
+    UX_DESIGN,
+    DIGITAL_MARKETING
+}

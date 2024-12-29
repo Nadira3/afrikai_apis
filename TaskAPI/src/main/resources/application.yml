@@ -1,0 +1,10 @@
+server:
+  port: ${SERVER_PORT:8083} # Default port is 8083 if SERVER_PORT is not set
+
+spring:
+  application:
+    name: task-service
+
+service:
+  user-api: ${USER_API_URL:http://localhost:8081} # Fallback to localhost if not set
+  label-api: ${LABEL_API_URL:http://localhost:8082}

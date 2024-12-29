@@ -25,6 +25,7 @@ public class SecurityConfig {
     private CustomUserDetailsService userDetailsService;
 
     @Bean
+
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
@@ -39,6 +40,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+    
 
     @Bean
     public AuthenticationManager authenticationManager(
@@ -52,14 +54,14 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-     @Bean
-    UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
-        User.UserBuilder users = User.builder();
-        UserDetails cher = users
-            .username("cherjoie")
-            .password(passwordEncoder.encode("abc123"))
-            .roles("ADMIN")
-            .build();
-        return new InMemoryUserDetailsManager(cher);
-    }
+    // @Bean
+    // UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
+    //     User.UserBuilder users = User.builder();
+    //     UserDetails cher = users
+    //         .username("cherjoie")
+    //         .password(passwordEncoder.encode("abc123"))
+    //         .roles("ADMIN")
+    //         .build();
+    //     return new InMemoryUserDetailsManager(cher);
+    // }
 }
