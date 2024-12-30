@@ -2,6 +2,7 @@ package com.precious.LabelAPI.dto;
 
 import java.util.Objects;
 import java.util.UUID;
+import com.precious.LabelAPI.model.UserRole;
 
 /**
  * DTO for Client entity references from external service
@@ -13,7 +14,7 @@ import java.util.UUID;
  *   - Custom validation in the compact constructor
  *   - Custom methods if needed
  */
-public record ClientReferenceDto(UUID id, String name, String organization) {
+public record ClientReferenceDto(UUID id, String name, UserRole role) {
 
 	// Custom validation in the compact constructor
 

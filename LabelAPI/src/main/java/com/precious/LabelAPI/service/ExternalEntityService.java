@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.precious.LabelAPI.dto.ClientReferenceDto;
 import com.precious.LabelAPI.dto.TaskReferenceDto;
 import com.precious.LabelAPI.exceptions.ExternalServiceException;
+import com.precious.LabelAPI.exceptions.UnauthorizedRequestException;
 
 import java.time.Duration;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -113,21 +114,30 @@ public class ExternalEntityService {
      * The method fetches client information from the client service
      * Same logic as getTaskReference method
      */
-    public Mono<ClientReferenceDto> getClientReference(UUID clientId) {
+	public Mono<ClientReferenceDto> getClientReference(UUID clientId) {
+    return clientServiceClient.get()
+            .uri("/api/v1/clients/{id}", clientId)
+            .retrieve()
+            .onStatus(
+                HttpStatusCode::is4xxClientError,
+                response -> Mono.error(new ExternalServiceException("Client Service", "Client not found: " + clientId))
+            )
+            .onStatus(
+                HttpStatusCode::is5xxServerError,
+                response -> Mono.error(new ExternalServiceException("Client Service", "Server error"))
+            )
+            .bodyToMono(ClientReferenceDto.class)
+	         .flatMap(client -> {
+                log.debug("Client role: {}", client.getRole());
+                log.debug("Expected role: {}", Role.CLIENT.name());
 
-		return clientServiceClient.get()
-			.uri("/api/v1/clients/{id}", clientId)
-			.retrieve()
-			.onStatus(
-			HttpStatusCode::is4xxClientError,
-			response -> Mono.error(new ExternalServiceException("Client Service", "Client not found: " + clientId))
-			)
-			.onStatus(
-			HttpStatusCode::is5xxServerError,
-			response -> Mono.error(new ExternalServiceException("Client Service", "Server error"))
-			)
-			.bodyToMono(ClientReferenceDto.class)
-			.retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).maxBackoff(Duration.ofSeconds(5)))
-			.doOnError(e -> log.error("Error fetching client {}: {}", clientId, e.getMessage()));
-    }
+                if (!client.getRole().equalsIgnoreCase(Role.CLIENT.name())) {
+                    return Mono.error(new UnauthorizedRequestException("User is not a client"));
+                }
+
+                return Mono.just(client);
+            })
+            .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).maxBackoff(Duration.ofSeconds(5)))
+            .doOnError(e -> log.error("Error fetching client {}: {}", clientId, e.getMessage()));
+}
 }

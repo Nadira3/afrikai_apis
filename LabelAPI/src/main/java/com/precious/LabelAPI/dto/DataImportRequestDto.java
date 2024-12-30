@@ -18,12 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 public class DataImportRequestDto {
 
-    @NotBlank(message = "File name is required")
-    private String fileName;
-
-    @NotNull(message = "File type is required")
-    private FileType fileType;
-
     @NotNull(message = "File is required")
     private MultipartFile file;
 
