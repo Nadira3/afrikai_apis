@@ -18,7 +18,7 @@ import reactor.util.retry.Retry;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatusCode;
 
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import reactor.core.publisher.Mono;
 
 // Create a service to handle external entity interactions
@@ -30,7 +30,7 @@ public class ExternalEntityService {
     private final CircuitBreaker circuitBreaker;
 
     @Autowired
-    public ExternalEntityService(WebClient taskServiceClient, WebClient clientServiceClient, CircuitBreaker circuitBreaker) {
+    public ExternalEntityService(@Qualifier("taskServiceClient") WebClient taskServiceClient, @Qualifier("clientServiceClient") WebClient clientServiceClient, CircuitBreaker circuitBreaker) {
         this.taskServiceClient = taskServiceClient;
         this.clientServiceClient = clientServiceClient;
         this.circuitBreaker = circuitBreaker;

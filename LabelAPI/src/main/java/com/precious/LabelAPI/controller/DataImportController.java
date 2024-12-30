@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  * type(Csv, json, xls, xlsx) to the database.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/label")
 public class DataImportController {
 
     // Autowire the DataImportService
