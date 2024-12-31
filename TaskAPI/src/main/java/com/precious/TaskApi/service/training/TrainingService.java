@@ -8,7 +8,6 @@ import com.precious.TaskApi.model.content.TrainingContent;
 import com.precious.TaskApi.model.enums.TaskStatus;
 import com.precious.TaskApi.model.content.TaskContent;
 import com.precious.TaskApi.model.task.Task;
-import com.precious.TaskApi.service.task.TaskService;
 import com.precious.TaskApi.repository.TrainingRepository;
 import com.precious.TaskApi.service.NotificationService;
 import com.precious.TaskApi.service.exam.ExamContentService;
@@ -29,20 +28,17 @@ import java.util.HashSet;
 public class TrainingService {
     private final TrainingRepository trainingRepository;
     private final NotificationService notificationService;
-    private final TaskService taskService;
     private final WebClient taskSpecificApiClient;
     private final ExamContentService examContentService;
 
     @Autowired
     public TrainingService
     (
-        TaskService taskService,
         ExamContentService examContentService,
         TrainingRepository trainingRepository, 
         NotificationService notificationService, 
         WebClient taskSpecificApiClient
         ) {
-            this.taskService = taskService;
             this.examContentService = examContentService;
         this.trainingRepository = trainingRepository;
         this.notificationService = notificationService;
@@ -87,7 +83,7 @@ public class TrainingService {
         training.setCompletedAt(request.getCompletedAt());
 
         // update task status to completed
-        taskService.transitionTaskStatus(training.getId(), TaskStatus.COMPLETED);
+        training.setStatus(TaskStatus.COMPLETED);
 
         // Notify users
         notificationService.notifyTrainingCompletion(request);

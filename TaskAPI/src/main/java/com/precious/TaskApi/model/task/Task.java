@@ -73,13 +73,6 @@ public abstract class Task {
     @Column(name = "priority", nullable = false)
     private Integer priority = 0; // Default priority is 0 (lowest) 1 (medium) 2 (high)
 
-    // Task has a relationship with multiple training sessions and exams
-    @OneToMany(mappedBy = "task")
-    private Set<Training> trainings; // One task can have multiple trainings
-
-    @OneToMany(mappedBy = "task")
-    private Set<Exam> exams; // One task can have multiple exams
-
     private TaskStatus status = TaskStatus.PENDING; // Default status is PENDING
 
     private LocalDateTime deadline;

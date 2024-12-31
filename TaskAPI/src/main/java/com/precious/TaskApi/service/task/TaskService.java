@@ -25,11 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 // Service implementation
 @Service
 @Slf4j
-@RequiredArgsConstructor
 public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
     private final NotificationService notificationService;
     private final TaskFactory taskFactory;
+
+    public TaskService(TaskRepository taskRepository, NotificationService notificationService, TaskFactory taskFactory) {
+        this.taskRepository = taskRepository;
+        this.notificationService = notificationService;
+        this.taskFactory = taskFactory;
+    }
 
     private void validateTaskRequest(TaskCreationDto request) {
 

@@ -3,6 +3,7 @@ package com.precious.TaskApi.service.worktask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.stereotype.Service;
 
 import com.precious.TaskApi.dto.task.TaskCreationDto;
 import com.precious.TaskApi.model.content.TaskContent;
@@ -12,6 +13,7 @@ import com.precious.TaskApi.service.exam.ExamContentService;
 import com.precious.TaskApi.repository.WorkTaskRepository;
 import com.precious.TaskApi.model.content.WorkContent;
 
+@Service
 public class WorkTaskService {
     private final WorkTaskRepository workTaskRepository;
     private final NotificationService notificationService;
