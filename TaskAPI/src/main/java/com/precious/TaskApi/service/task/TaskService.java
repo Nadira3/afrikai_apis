@@ -60,57 +60,15 @@ public class TaskService implements ITaskService {
         // Update task status
         task.setStatus(newStatus);
     }
-
-    private void populateCommonProperties(Task task, TaskCreationDto request) {
-        task.setCreatedBy(request.getCreatedBy());
-        task.setClientId(request.getClientId());
-        task.setCategory(request.getCategory());
-        task.setCreatedAt(LocalDateTime.now());
-        task.setDeadline(request.getDeadline());
-        task.setDescription(request.getDescription());
-        task.setPriority(request.getPriority());
-        task.setReward(request.getReward());
-        task.setTitle(request.getTitle());
-        task.setType(request.getType());
-        task.setDurationPerTask(request.getDurationPerTask());   
-    }
-
+    
     @Transactional
-    public Task createTask(TaskCreationDto request) {
+    public Task createTask(TaskCreationDto request, String clientId) {
 
         try {
                 // Validate task creation request
                 validateTaskRequest(request);
                 
-                // Create task using factory
-                Task processedTask = taskFactory.createTask(request);
-            
-                // Set common properties
-                populateCommonProperties(processedTask, request);
-
-                // Save task
-                Task savedTask = taskRepository.save(processedTask);
-                
-                // transition task to created state
-                transitionTaskStatus(processedTask.getId(), TaskStatus.CREATED);
-
-                // Notify eligible users
-                notificationService.notifyNewTrainingAvailable(savedTask);
-
-                return savedTask;
-            } catch (InvalidTaskRequestException e) {
-                log.error("Invalid task request", e);
-                throw e;
-            } catch (TaskPopulationException e) {
-                log.error("Error populating task", e);
-                throw e;
-            } catch (InvalidTaskTransitionException e) {
-                log.error("Invalid task transition", e);
-                throw e;
-            } catch (Exception e) {
-                log.error("Error creating task", e);
-                throw new TaskCreationException("Error creating task");
-            }
+                // Create the task
     }
 
     // assign task methods and others to be implemented

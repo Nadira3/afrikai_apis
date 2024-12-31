@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -34,23 +37,29 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<Task> createTask(@RequestBody TaskCreationDto request, UriComponentsBuilder ucb) {
-        URI locationOfNewTask = ucb.path("/api/tasks/{id}")
-                                    .buildAndExpand(taskService.createTask(request).getId())
-                                    .toUri();
-        return ResponseEntity.created(locationOfNewTask).build();
+    // Endpoint to upload a new task
+    @PostMapping("/upload")
+    public ResponseEntity<Task> uploadTask(
+        @RequestBody @Valid TaskCreationDto taskCreationDto, 
+        @AuthenticationPrincipal Principal principal,
+        UriComponentsBuilder uriComponentsBuilder
+        ) {
+
+        // Extract the logged-in user
+        String clientId = principal.getName(); // Assumes username is the clientId
+        
+        // Use the service layer to create the task
+        Task task = taskService.createTask(taskCreationDto, clientId);
+
+        // check if the task is created successfully
+        if (task == null) {
+            return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).build();
+        }
+
+        // Build the URI for the newly created task
+        URI location = uriComponentsBuilder.path("/api/tasks/{id}").buildAndExpand(task.getId()).toUri();
+
+        // Return the task and the location if task is created successfully
+        return ResponseEntity.created(location).body(task);
     }
-
-    // @PostMapping("/{taskId}/review")
-    // public ResponseEntity<Review> reviewTask(
-    //         @PathVariable Long taskId,
-    //         @RequestBody TaskReviewRequest request) {
-    //     return ResponseEntity.ok(taskService.reviewTask(taskId, request));
-    // }
-
-    // @GetMapping("/qualified")
-    // public ResponseEntity<List<Task>> getQualifiedTasks(@RequestParam Long userId) {
-    //     return ResponseEntity.ok(taskService.findQualifiedTasksForUser(userId));
-    // }
 }

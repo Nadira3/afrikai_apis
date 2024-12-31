@@ -7,7 +7,7 @@ import com.precious.TaskApi.model.task.Task;
 
 public interface ITaskService {
     // Task Creation
-    Task createTask(TaskCreationDto request);
+    Task createTask(TaskCreationDto request, String clientId);
     // // Task Discovery
     // List<Task> findAvailableTasks();
     // List<Task> findTasksByCategory(TaskCategory category);

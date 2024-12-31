@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.precious.TaskApi.dto.task.TaskCreationDto;
 import com.precious.TaskApi.model.enums.TaskCategory;
 import com.precious.TaskApi.model.enums.TaskStatus;
 import com.precious.TaskApi.model.enums.TaskType;
@@ -78,4 +79,15 @@ public abstract class Task {
     private LocalDateTime deadline;
 
     private Duration durationPerTask;
+
+    // map to the taskCreation dto
+    public Task fromTaskCreationDto(TaskCreationDto taskCreationDto) {
+        this.title = taskCreationDto.getTitle();
+        this.description = taskCreationDto.getDescription();
+        this.reward = taskCreationDto.getReward();
+        this.category = taskCreationDto.getCategory();
+        this.deadline = taskCreationDto.getDeadline();
+        this.durationPerTask = taskCreationDto.getDurationPerTask();
+        return this;
+    }
 }
