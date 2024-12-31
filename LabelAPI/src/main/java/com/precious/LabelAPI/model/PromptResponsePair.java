@@ -42,6 +42,8 @@ public class PromptResponsePair {
     @Column(name = "processing_status")
     private ProcessingStatus processingStatus;
 
+    private String metadata;
+
 // Constructor for creating a new prompt-response pair
     public PromptResponsePair(
 	String prompt,
@@ -58,6 +60,7 @@ public class PromptResponsePair {
 
     public void setMetadata(String cellValue) {
         // method to set metadata of prompt-response pair if available
+        this.metadata = cellValue;
         
     }
 }

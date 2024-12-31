@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.precious.LabelAPI.dto.ClientReferenceDto;
 import com.precious.LabelAPI.dto.TaskReferenceDto;
+import com.precious.LabelAPI.model.UserRole;
 
 import reactor.core.publisher.Mono;
 
@@ -69,7 +70,7 @@ public class ExternalEntityServiceTests {
 
     @Test
     public void testGetClientReference_success() {
-        ClientReferenceDto mockClient = new ClientReferenceDto(clientId, "John Doe", "");
+        ClientReferenceDto mockClient = new ClientReferenceDto(clientId, "John Doe", UserRole.ADMIN);
 
         // Mock the WebClient behavior for clientServiceClient
         when(clientServiceClient.get()

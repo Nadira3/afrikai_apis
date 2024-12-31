@@ -1,7 +1,5 @@
 package com.precious.LabelAPI.dto;
 
-import com.precious.LabelAPI.model.enums.FileType;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
