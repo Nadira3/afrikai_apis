@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import com.precious.LabelAPI.dto.ClientReferenceDto;
 import com.precious.LabelAPI.dto.TaskReferenceDto;
 import com.precious.LabelAPI.exceptions.ExternalServiceException;
+import com.precious.LabelAPI.exceptions.UnauthorizedRequestException;
 
 import java.time.Duration;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -18,7 +19,7 @@ import reactor.util.retry.Retry;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatusCode;
 
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import reactor.core.publisher.Mono;
 
 // Create a service to handle external entity interactions
@@ -30,7 +31,7 @@ public class ExternalEntityService {
     private final CircuitBreaker circuitBreaker;
 
     @Autowired
-    public ExternalEntityService(WebClient taskServiceClient, WebClient clientServiceClient, CircuitBreaker circuitBreaker) {
+    public ExternalEntityService(@Qualifier("taskServiceClient") WebClient taskServiceClient, @Qualifier("clientServiceClient") WebClient clientServiceClient, CircuitBreaker circuitBreaker) {
         this.taskServiceClient = taskServiceClient;
         this.clientServiceClient = clientServiceClient;
         this.circuitBreaker = circuitBreaker;
@@ -113,21 +114,30 @@ public class ExternalEntityService {
      * The method fetches client information from the client service
      * Same logic as getTaskReference method
      */
-    public Mono<ClientReferenceDto> getClientReference(UUID clientId) {
+	public Mono<ClientReferenceDto> getClientReference(UUID clientId) {
+    return clientServiceClient.get()
+            .uri("/api/v1/clients/{id}", clientId)
+            .retrieve()
+            .onStatus(
+                HttpStatusCode::is4xxClientError,
+                response -> Mono.error(new ExternalServiceException("Client Service", "Client not found: " + clientId))
+            )
+            .onStatus(
+                HttpStatusCode::is5xxServerError,
+                response -> Mono.error(new ExternalServiceException("Client Service", "Server error"))
+            )
+            .bodyToMono(ClientReferenceDto.class)
+	         .flatMap(client -> {
+                log.debug("Client role: {}", client.getRole());
+                log.debug("Expected role: {}", Role.CLIENT.name());
 
-		return clientServiceClient.get()
-			.uri("/api/v1/clients/{id}", clientId)
-			.retrieve()
-			.onStatus(
-			HttpStatusCode::is4xxClientError,
-			response -> Mono.error(new ExternalServiceException("Client Service", "Client not found: " + clientId))
-			)
-			.onStatus(
-			HttpStatusCode::is5xxServerError,
-			response -> Mono.error(new ExternalServiceException("Client Service", "Server error"))
-			)
-			.bodyToMono(ClientReferenceDto.class)
-			.retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).maxBackoff(Duration.ofSeconds(5)))
-			.doOnError(e -> log.error("Error fetching client {}: {}", clientId, e.getMessage()));
-    }
+                if (!client.getRole().equalsIgnoreCase(Role.CLIENT.name())) {
+                    return Mono.error(new UnauthorizedRequestException("User is not a client"));
+                }
+
+                return Mono.just(client);
+            })
+            .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)).maxBackoff(Duration.ofSeconds(5)))
+            .doOnError(e -> log.error("Error fetching client {}: {}", clientId, e.getMessage()));
+}
 }

@@ -19,10 +19,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
  * type(Csv, json, xls, xlsx) to the database.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/label")
 public class DataImportController {
 
-    // Autowire the DataImportService
     private final DataImportService dataImportService;
 
     @Autowired
@@ -31,13 +30,10 @@ public class DataImportController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<?> importData(@Valid @ModelAttribute DataImportRequestDto dataImportRequestDto) {
-        try {
-            dataImportService.importData(dataImportRequestDto);
-            return ResponseEntity.ok().body("Data imported successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error importing data: " + e.getMessage());
-        }
+    public Mono<ResponseEntity<DataImportResponseDto>> importData(@Valid @ModelAttribute DataImportRequestDto dataImportRequestDto) {
+        return dataImportService.importData(dataImportRequestDto)
+            .map(response -> ResponseEntity.ok(response)) // map the result into ResponseEntity
+            .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new DataImportResponseDto(UUID.randomUUID(), "Error", 0, ImportStatus.FAILED, LocalDateTime.now())))); // error handling
     }
 }

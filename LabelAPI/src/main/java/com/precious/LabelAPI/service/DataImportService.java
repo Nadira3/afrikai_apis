@@ -94,17 +94,18 @@ public class DataImportService {
      */
     // The method processes a file upload request for a specific client and returns the result wrapped in Mono.
     public Mono<?> importData(DataImportRequestDto requestDto) {
-        MultipartFile file = requestDto.getFile();
-        UUID clientId = requestDto.getClientId();
+    MultipartFile file = requestDto.getFile();
+    UUID clientId = requestDto.getClientId();
 
-        return externalEntityService.getClientReference(clientId)
+    return Mono.defer(() ->  // Defer execution until subscription
+        externalEntityService.getClientReference(clientId)
             .flatMap(client -> {
                 try {
                     // Determine file type and get appropriate strategy
                     FileType fileType = FileManagerUtil.determineFileType(file.getOriginalFilename());
                     DataImportStrategy strategy = importStrategies.get(fileType);
 
-		    // If the file type is not supported, an UnsupportedFileTypeException is thrown.
+                    // If the file type is not supported, throw error
                     if (strategy == null) {
                         return Mono.error(new UnsupportedFileTypeException(fileType.name()));
                     }
@@ -114,16 +115,18 @@ public class DataImportService {
                     dataImport.setClientId(clientId);
                     dataImport.setImportStatus(ImportStatus.PROCESSING);
 
-                    // Save initial import record
-                    dataImport = dataImportRepository.save(dataImport);
-
-                    // Process file reactively
-                    return processFile(file, strategy, dataImport);
-                    
+                    // Save the initial import record
+                    return dataImportRepository.save(dataImport)
+                        .flatMap(savedDataImport -> 
+                            // Process file reactively and update status
+                            processFile(file, strategy, savedDataImport)
+                                .map(fileProcessed -> DataImportResponseDto.fromEntity(savedDataImport)) // Map to response DTO
+                        );
                 } catch (Exception e) {
                     return Mono.error(new FileProcessingException(e.getMessage()));
                 }
-            });
+            })
+    );
     }
 
     /**

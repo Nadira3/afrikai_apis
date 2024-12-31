@@ -15,8 +15,8 @@ import java.util.UUID;
 public interface DataImportRepository extends JpaRepository<DataImport, UUID> {
 
 	// Find all imports by status
-	List<DataImport> findByStatus(ImportStatus importStatus);
+	List<DataImport> findByImportStatus(ImportStatus importStatus);
 
 	// Find a specific import by filename
-	DataImport findByFilename(String filename);
+	DataImport findByFileName(String filename);
 }
