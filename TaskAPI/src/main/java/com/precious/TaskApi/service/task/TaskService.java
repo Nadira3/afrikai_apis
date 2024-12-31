@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.precious.TaskApi.dto.task.TaskCreationDto;
+import com.precious.TaskApi.dto.task.TaskCreationResponseDto;
 import com.precious.TaskApi.exception.InvalidTaskRequestException;
 import com.precious.TaskApi.exception.InvalidTaskTransitionException;
 import com.precious.TaskApi.exception.TaskCreationException;
@@ -69,9 +70,76 @@ public class TaskService implements ITaskService {
                 validateTaskRequest(request);
                 
                 // Create the task
+		Task task = new Task();
+		task.setClientId(clientId);
+		task.setTitle(request.getTitle());
+		task.setDescription(request.getDescription());
+		task.setReward(request.getReward());
+		task.setCreatedAt(request.getCreatedAt());
+		task.setDeadline(request.getDeadline());
+		task.setCategory(request.getCategory());
+
+		// Save the task
+		TaskResonseDto savedTask = taskRepository.save(task)
+			.map(Task::toTaskResponseDto);
+
+		// Update the task status
+		transitionTaskStatus(task.getId(), TaskStatus.CREATED);
+
+		// Notify an admin
+		notificationService.notifyAdmin(task);
+
+		return response;
+	} catch (Exception e) {
+	    log.error("Error creating task: " + e.getMessage());
+	    throw new TaskCreationException("Error creating task");
+	}
+
     }
 
-    // assign task methods and others to be implemented
+// process each task file and save it to the database
+
+	@Transactional
+    public void processTasks(TaskCreationDto request, Task task) {
+	try {
+		MultipartFile trainingFile = request.getTrainingFile();
+
+		TrainingContent trainingContent = new TrainingContent();
+		trainingContent.setInstructions(processTraining(trainingFile, task));
+
+		// instantiante a new training object
+		Traing training = new Training();
+		training.setTrainingContent(trainingContent);
+		training.setTask(task);
+
+
+		trainingContent.setTask(task);
+		
+		// Save the training content
+		trainingRepository.save(training);
+
+		// set training content to task
+		task.setTraining(training);
+
+
+		ExamContent examContent = new ExamContent();
+		examContent.set
+
+
+	    // Save the task
+	    taskRepository.save(task);
+
+	    // Update the task status
+	    transitionTaskStatus(task.getId(), TaskStatus.CREATED);
+
+	    // Notify an admin
+	    notificationService.notifyAdmin(task);
+
+	} catch (Exception e) {
+	    log.error("Error creating task: " + e.getMessage());
+	    throw new TaskPopulationException("Error creating task");
+	}
+    }
     
 
 }

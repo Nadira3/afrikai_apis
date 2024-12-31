@@ -23,7 +23,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @DiscriminatorValue("EXAM")
-public class Exam extends Task {
+public class Exam {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "exam_id")
+	private UUID id;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -39,5 +44,8 @@ public class Exam extends Task {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "exam_content_id")  // The foreign key linking to the ExamContent
-    private ExamContent examContent;  // New field to link content
+    private TaskContent examContent;  // New field to link content
+	
+    @OneToOne
+    private Task task
 }

@@ -12,5 +12,6 @@ public enum TaskStatus {
     COMPLETED,   // Task successfully completed
     REJECTED,    // Task submission rejected
     CANCELLED,
+    FAILED,
     EXPIRED;     // Task expired
 }

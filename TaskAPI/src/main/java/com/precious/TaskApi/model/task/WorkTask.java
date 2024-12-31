@@ -28,9 +28,9 @@ import lombok.Setter;
 @DiscriminatorValue("WORK")
 public class WorkTask extends Task {
     @OneToOne(cascade = CascadeType.ALL)
-    private WorkContent content;
+    private TaskContent content;
 
-    private Integer complexity;
+    private Integer complexity; // from 1 to 5 (5 being the most complex) 
 
     @ElementCollection(targetClass = Skill.class)
     @CollectionTable(name = "work_task_skills", joinColumns = @JoinColumn(name = "task_id"))

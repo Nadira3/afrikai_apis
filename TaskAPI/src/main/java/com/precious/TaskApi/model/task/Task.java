@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import com.precious.TaskApi.dto.task.TaskCreationDto;
+import com.precious.TaskApi.dto.task.TaskResponseDto;
 import com.precious.TaskApi.model.enums.TaskCategory;
 import com.precious.TaskApi.model.enums.TaskStatus;
 import com.precious.TaskApi.model.enums.TaskType;
@@ -34,7 +35,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "tasks")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Task {
+public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -74,14 +75,26 @@ public abstract class Task {
     @Column(name = "priority", nullable = false)
     private Integer priority = 0; // Default priority is 0 (lowest) 1 (medium) 2 (high)
 
-    private TaskStatus status = TaskStatus.PENDING; // Default status is PENDING
+    private TaskStatus status = TaskStatus.CREATED; // Default status is PENDING
 
     private LocalDateTime deadline;
 
     private Duration durationPerTask;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "exam_id", referencedColumnName = "id")
+    private Exam exam;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "worktask_id", referencedColumnName = "id")
+    private WorkTask workTask;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "training_id", referencedColumnName = "id")
+    private Training training;
+
     // map to the taskCreation dto
-    public Task fromTaskCreationDto(TaskCreationDto taskCreationDto) {
+    public static Task fromTaskCreationDto(TaskCreationDto taskCreationDto) {
         this.title = taskCreationDto.getTitle();
         this.description = taskCreationDto.getDescription();
         this.reward = taskCreationDto.getReward();
@@ -89,5 +102,20 @@ public abstract class Task {
         this.deadline = taskCreationDto.getDeadline();
         this.durationPerTask = taskCreationDto.getDurationPerTask();
         return this;
+    }
+
+    // map to TaskResponseDto object
+    public static TaskResponseDto toTaskResponseDto() {
+	    TaskResponseDto taskResponseDto = new TaskResponseDto();
+
+	    taskResponseDto.setId(this.id);
+	    taskResponseDto.setTitle(this.title);
+	    taskResponseDto.setDescription(this.description);
+	    taskResponseDto.setStatus(this.status);
+	    taskResponseDto.setReward(this.reward);
+	    taskResponseDto.setCreatedAt(this.createdAt);
+
+	    return taskResponseDto;
+
     }
 }

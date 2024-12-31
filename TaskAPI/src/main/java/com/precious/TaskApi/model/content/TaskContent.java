@@ -25,20 +25,15 @@ import jakarta.persistence.InheritanceType;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class TaskContent {
+public class TaskContent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @ElementCollection
-    @CollectionTable(name = "exam_questions", joinColumns = @JoinColumn(name = "exam_content_id"))
     @Column(name = "question", columnDefinition = "TEXT")
     private List<String> questions;
     
-    @ElementCollection
-    @CollectionTable(name = "exam_answers", joinColumns = @JoinColumn(name = "exam_content_id"))
     @Column(name = "answer", columnDefinition = "TEXT")
     private List<String> answers;
 

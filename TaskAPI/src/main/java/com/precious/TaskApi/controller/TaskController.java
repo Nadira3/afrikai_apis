@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.validation.BindingResult;
+import org.springframework.http.HttpStatus;
+import java.util.stream.Collectors;
 
 import java.net.URI;
 import java.security.Principal;
@@ -22,6 +25,8 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 import com.precious.TaskApi.dto.task.TaskCreationDto;
+import com.precious.TaskApi.dto.task.TaskResponseDto;
+import com.precious.TaskApi.dto.task.TaskProcessingDto;
 import com.precious.TaskApi.dto.task.TaskReviewRequest;
 import com.precious.TaskApi.model.Review;
 import com.precious.TaskApi.model.task.Task;
@@ -39,7 +44,7 @@ public class TaskController {
 
     // Endpoint to upload a new task
     @PostMapping("/upload")
-    public ResponseEntity<Task> uploadTask(
+    public ResponseEntity<TaskResponseDto> uploadTask(
         @RequestBody @Valid TaskCreationDto taskCreationDto, 
         @AuthenticationPrincipal Principal principal,
         UriComponentsBuilder uriComponentsBuilder
@@ -53,13 +58,14 @@ public class TaskController {
 
         // check if the task is created successfully
         if (task == null) {
-            return ResponseEntity.status(Response.SC_INTERNAL_SERVER_ERROR).build();
-        }
+	    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(TaskResponseDto.toErrorTemplate(taskCreationDto));
+	}
 
         // Build the URI for the newly created task
         URI location = uriComponentsBuilder.path("/api/tasks/{id}").buildAndExpand(task.getId()).toUri();
 
         // Return the task and the location if task is created successfully
-        return ResponseEntity.created(location).body(task);
+        return ResponseEntity.created(location).body(TaskResponseDto.fromEntity(task));
     }
+
 }

@@ -20,12 +20,18 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @DiscriminatorValue("TRAINING")
-public class Training extends Task {
-    @OneToOne(cascade = CascadeType.ALL)
-    private TrainingContent content;
+public class Training {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	    @Column(name = "training_id")
+	private UUID id;
     
-    private LocalDateTime duration;
+	private LocalDateTime duration;
     
-    private List<String> prerequisites;
+	private String instructions;
+
+	@OneToOne
+	private Task task
 
 }

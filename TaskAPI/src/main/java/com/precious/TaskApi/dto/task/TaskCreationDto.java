@@ -19,7 +19,12 @@ import com.precious.TaskApi.model.enums.TaskCategory;
 public class TaskCreationDto {
     // File uploaded by the client
     @NotNull(message = "Task file is required")
-    private MultipartFile taskFile;
+    private MultipartFile mainTaskFile;
+
+    @NotNull(message = "Instruction file is required")
+    private MultipartFile instructionFile;
+
+    private MultipartFile examFile;
 
     // Title and description of the task
     @NotBlank(message = "Title is required")

@@ -13,13 +13,23 @@ import lombok.Data;
 @lombok.AllArgsConstructor
 @lombok.NoArgsConstructor
 public class TaskResponseDto {
-    private UUID id;
+    private UUID id; // UUID for created task if available
     private String title;
     private String description;
     private TaskStatus status;
     private double reward;
     private LocalDateTime createdAt;
-    private String clientUsername;
-    private String assignedTaskerUsername;
     private TaskCategory category;
+
+    // Template to return for processinf errors
+public static TaskResponseDto toErrorTemplate(TaskCreationDto taskCreationDto) {
+	TaskResponseDto taskResponseDto = new TaskResponseDto();
+	taskResponseDto.setTitle(request.getTitle());
+	taskResponseDto.setDescription("Error processing task");
+	taskResponseDto.setStatus(TaskStatus.FAILED);
+	taskResponseDto.setReward(request.getReward());
+	taskResponseDto.setCreatedAt(LocalDateTime.now());
+	taskResponseDto.setCategory(request.getCategory());
+	return taskResponseDto;
+}
 }
