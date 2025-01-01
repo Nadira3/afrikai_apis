@@ -1,24 +1,19 @@
 package com.precious.UserApi.controller;
 
-import com.precious.UserApi.dto.user.UserCreationDto;
 import com.precious.UserApi.dto.user.UserRequestDto;
-import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.model.enums.UserRole;
 import com.precious.UserApi.model.user.User;
 import com.precious.UserApi.service.user.UserService;
 
-import jakarta.validation.Valid;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,28 +42,6 @@ public class UserController {
         Page<UserResponseDto> userDtoPage = userPage.map(User::toUserResponseDto);
 
         return ResponseEntity.ok(userDtoPage.getContent());
-    }
-
-    // Register user and return the location of the new user
-    @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> registerUser(
-        @Valid @RequestBody UserRegistrationDto registrationDto,
-        
-        UriComponentsBuilder uriComponentsBuilder
-    ) {
-        UserResponseDto registeredUserDto = userService.registerUser(registrationDto);
-        return ResponseEntity.created(uriComponentsBuilder.path("/api/users/{id}")
-            .buildAndExpand(registeredUserDto.getId()).toUri()).body(registeredUserDto);
-    }
-
-
-    @PostMapping("/admin/create")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> createUser(
-        @RequestBody UserCreationDto creationDto
-    ) {
-        UserResponseDto createdUserDto = userService.createUser(creationDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUserDto);
     }
 
     @GetMapping("/{userId}")

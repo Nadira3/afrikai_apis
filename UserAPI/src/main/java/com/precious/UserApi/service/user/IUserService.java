@@ -1,6 +1,5 @@
 package com.precious.UserApi.service.user;
 
-import com.precious.UserApi.dto.user.UserCreationDto;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.dto.user.UserRequestDto;
@@ -12,11 +11,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface IUserService {
     // User Registration
-    UserResponseDto registerUser(UserRegistrationDto registrationDto);
-
-    // User Creation
-    UserResponseDto createUser(UserCreationDto creationDto);
-    User createUserByRole(String username, String email, String password, UserRole role);
+    String registerUser(UserRegistrationDto registrationDto);
 
     // User Management
     User getUserById(Long id);

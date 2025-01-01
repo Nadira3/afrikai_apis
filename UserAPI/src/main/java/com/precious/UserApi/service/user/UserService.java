@@ -1,26 +1,25 @@
 package com.precious.UserApi.service.user;
 
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.precious.UserApi.dto.user.UserCreationDto;
 import com.precious.UserApi.dto.user.UserRequestDto;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.repository.UserRepository;
+import com.precious.UserApi.service.ConfirmationTokenService;
 import com.precious.UserApi.exception.*;
+import com.precious.UserApi.model.ConfirmationToken;
 import com.precious.UserApi.model.enums.UserRole;
-import com.precious.UserApi.model.user.Admin;
-import com.precious.UserApi.model.user.Client;
-import com.precious.UserApi.model.user.Tasker;
 import com.precious.UserApi.model.user.User;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,17 +30,19 @@ public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+    private final ConfirmationTokenService confirmationTokenService;
 
     public UserService(
-        UserRepository userRepository, 
-        PasswordEncoder passwordEncoder
-    ) {
+            UserRepository userRepository,
+            PasswordEncoder passwordEncoder,
+            ConfirmationTokenService confirmationTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.confirmationTokenService = confirmationTokenService;
     }
 
     @Override
-    public UserResponseDto registerUser(UserRegistrationDto registrationDto) {
+    public String registerUser(UserRegistrationDto registrationDto) {
         // Validate unique email and username
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             logger.warn("Attempted registration with existing email: {}", registrationDto.getEmail());
@@ -54,74 +55,33 @@ public class UserService implements IUserService {
         }
 
         // Create new user
-        User newUser = createUserByRole(
-            registrationDto.getUsername(),
-            registrationDto.getEmail(),
-            registrationDto.getPassword(),
-            registrationDto.getRole()
-            );
-        
-        // Save and log
+        User newUser = new User(
+                registrationDto.getUsername(),
+                registrationDto.getEmail(),
+                passwordEncoder.encode(registrationDto.getPassword()),
+                registrationDto.getRole());
+
         User savedUser = userRepository.save(newUser);
+
         logger.info("New user registered: {} with role {}", savedUser.getUsername(), savedUser.getRole());
-        
-        return userRepository.save(newUser).toUserResponseDto();
-    }
 
-    @Override
-    public UserResponseDto createUser(UserCreationDto creationDto) {
-        // Create user with specified role
-        if (!UserRole.exists(creationDto.getRole().name())) {
-            throw new IllegalArgumentException("Invalid role: " + creationDto.getRole());
-        }
+        String token = UUID.randomUUID().toString();
 
-        User newUser = createUserByRole(
-            creationDto.getUsername(),
-            creationDto.getEmail(),
-            creationDto.getPassword(),
-            creationDto.getRole()
-            );   
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                newUser);
 
-        return userRepository.save(newUser).toUserResponseDto();
-    }
-
-    
-    public User createUserByRole(String username, String email, String password, UserRole role) {
-        // Create user with specified role
-
-        // Check if role is valid
-        if (!UserRole.exists(role.name())) {
-            throw new IllegalArgumentException("Invalid role: " + role);
-        }
-
-        User newUser;
-        
-        // Instantiate the user based on the role
-        switch (role) {
-            case CLIENT:
-                newUser = new Client();
-                break;
-            case TASKER:
-                newUser = new Tasker();
-                break;
-            case ADMIN:
-                newUser = new Admin(); // Admin will have no special attributes
-                break;
-            default:   // Should never reach here
-                throw new IllegalArgumentException("Invalid role: " + role);
-        }
-        newUser.setUsername(username);
-        newUser.setEmail(email);
-        newUser.setPassword(passwordEncoder.encode(password));
-        newUser.setRole(role);
-
-        return newUser;
+        confirmationTokenService.saveConfirmationToken(
+                confirmationToken);
+        return token;
     }
 
     @Override
     public User getUserById(Long userId) {
         return userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
     }
 
     @Override
@@ -131,29 +91,27 @@ public class UserService implements IUserService {
 
     public UserResponseDto updateUser(Long userId, UserRequestDto updatedUser) {
         return userRepository.findById(userId)
-            .map(existingUser -> {
-                existingUser.setUsername(
-                    Optional.ofNullable(updatedUser.getUsername())
-                            .map(username -> username) // If present, map it to the value
-                            .orElse(existingUser.getUsername())
-                );
+                .map(existingUser -> {
+                    existingUser.setUsername(
+                            Optional.ofNullable(updatedUser.getUsername())
+                                    .map(username -> username) // If present, map it to the value
+                                    .orElse(existingUser.getUsername()));
 
-                existingUser.setEmail(
-                    Optional.ofNullable(updatedUser.getEmail())
-                            .map(email -> email)
-                            .orElse(existingUser.getEmail())
+                    existingUser.setEmail(
+                            Optional.ofNullable(updatedUser.getEmail())
+                                    .map(email -> email)
+                                    .orElse(existingUser.getEmail())
 
                 );
-                existingUser.setPassword(
-                    Optional.ofNullable(updatedUser.getPassword())
-                            .map(password -> passwordEncoder.encode(updatedUser.getPassword()))
-                            .orElse(existingUser.getPassword())
-                );
-                return userRepository.save(existingUser).toUserResponseDto();
-            })
-            .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+                    existingUser.setPassword(
+                            Optional.ofNullable(updatedUser.getPassword())
+                                    .map(password -> passwordEncoder.encode(updatedUser.getPassword()))
+                                    .orElse(existingUser.getPassword()));
+                    return userRepository.save(existingUser).toUserResponseDto();
+                })
+                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
     }
-    
+
     @Override
     public void deleteUser(Long userId) {
         try {
@@ -186,7 +144,7 @@ public class UserService implements IUserService {
         if (amount < 0) {
             throw new IllegalArgumentException("Amount must be positive");
         }
-    }    
+    }
 
     // Wallet methods
     @Override
@@ -223,5 +181,14 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             throw new UserNotFoundException("User not found with ID: " + userId);
         }
+    }
+
+    public void enableUser(String email) {
+       try {
+         userRepository.enableUser(email);
+       } catch (Exception e) {
+            logger.error("Failed to enable user with email: {}", email);
+            throw new UserNotFoundException("User not found with email: " + email);
+       }
     }
 }

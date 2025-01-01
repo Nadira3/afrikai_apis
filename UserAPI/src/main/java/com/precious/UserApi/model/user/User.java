@@ -3,12 +3,11 @@ package com.precious.UserApi.model.user;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Column;
-import jakarta.persistence.DiscriminatorColumn;
-import jakarta.persistence.DiscriminatorType;
 import jakarta.persistence.Enumerated;
 
 import java.math.BigDecimal;
@@ -18,8 +17,6 @@ import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.model.enums.UserRole;
 
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Entity;
 
@@ -27,11 +24,9 @@ import jakarta.persistence.Entity;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@EqualsAndHashCode
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
-public abstract class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -54,7 +49,7 @@ public abstract class User {
     private BigDecimal wallet = BigDecimal.ZERO;
 
     @Column(nullable = false)
-    private boolean enabled = true;
+    private boolean enabled = false;
 
     @Column(nullable = false)
     private LocalDateTime registeredAt = LocalDateTime.now();

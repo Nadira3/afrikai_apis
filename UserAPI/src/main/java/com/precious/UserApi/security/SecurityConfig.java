@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/users/register").permitAll()
+                .requestMatchers("/api/users/register/**").permitAll()
                 .requestMatchers("/api/users/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/users/{userId}/**").authenticated()
                 .anyRequest().authenticated()
@@ -54,14 +54,14 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // @Bean
-    // UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
-    //     User.UserBuilder users = User.builder();
-    //     UserDetails cher = users
-    //         .username("cherjoie")
-    //         .password(passwordEncoder.encode("abc123"))
-    //         .roles("ADMIN")
-    //         .build();
-    //     return new InMemoryUserDetailsManager(cher);
-    // }
+    @Bean
+    UserDetailsService testOnlyUsers(PasswordEncoder passwordEncoder) {
+        User.UserBuilder users = User.builder();
+        UserDetails cher = users
+            .username("cherjoie")
+            .password(passwordEncoder.encode("abc123"))
+            .roles("ADMIN")
+            .build();
+        return new InMemoryUserDetailsManager(cher);
+    }
 }
