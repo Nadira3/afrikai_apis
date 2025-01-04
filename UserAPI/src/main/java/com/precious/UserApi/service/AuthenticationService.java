@@ -1,33 +1,113 @@
 package com.precious.UserApi.service;
 
-import com.precious.UserApi.service.user.UserService;
 import com.precious.UserApi.service.email.EmailSender;
 import com.precious.UserApi.model.ConfirmationToken;
+import com.precious.UserApi.model.user.User;
+import com.precious.UserApi.repository.UserRepository;
+import com.precious.UserApi.security.custom.CustomUserDetails;
+import com.precious.UserApi.dto.AuthRequest;
+import com.precious.UserApi.dto.AuthResponse;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
+import com.precious.UserApi.exception.UserAlreadyExistsException;
+import com.precious.UserApi.exception.UserNotFoundException;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
-@AllArgsConstructor
-public class RegistrationService {
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class AuthenticationService {
 
-    private final UserService userService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+    private final PasswordEncoder passwordEncoder;
 
-    public String register(UserRegistrationDto request) {
-        String token = userService.registerUser(request);
 
-        String link = "http://localhost:8080/api/users/register/confirm?token=" + token;
+    public AuthResponse register(UserRegistrationDto request) {
+        User user = registerUser(request);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+
+        var jwtToken = jwtService.generateToken(userDetails);
+
+        return AuthResponse.builder()
+            .token(jwtToken)
+            .build();
+    }
+
+    public AuthResponse authenticate(AuthRequest request) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            request.getEmail(), 
+            request.getPassword())
+        );
+        var user = userRepository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new UserNotFoundException("User not found for login, please register"));
+        
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        var jwtToken = jwtService.generateToken(userDetails);
+
+        return AuthResponse.builder()
+            .token(jwtToken)
+            .build();
+        
+    }
+    
+    public User registerUser(UserRegistrationDto registrationDto) {
+        // Validate unique email and username
+        if (userRepository.existsByEmail(registrationDto.getEmail())) {
+            logger.warn("Attempted registration with existing email: {}", registrationDto.getEmail());
+            throw new UserAlreadyExistsException("Email is already in use");
+        }
+
+        if (userRepository.existsByUsername(registrationDto.getUsername())) {
+            logger.warn("Attempted registration with existing username: {}", registrationDto.getUsername());
+            throw new UserAlreadyExistsException("Username is already in use");
+        }
+
+        // Create new user
+        User newUser = new User(
+                registrationDto.getUsername(),
+                registrationDto.getEmail(),
+                passwordEncoder.encode(registrationDto.getPassword()),
+                registrationDto.getRole());
+
+        User savedUser = userRepository.save(newUser);
+
+        logger.info("New user registered: {} with role {}", savedUser.getUsername(), savedUser.getRole());
+
+        String token = UUID.randomUUID().toString();
+
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(15),
+                newUser);
+
+        confirmationTokenService.saveConfirmationToken(
+                confirmationToken);
+        
+        String link = "http://localhost:8080/api/auth/register/confirm?token=" + token;
         emailSender.send(
-                request.getEmail(),
-                buildEmail(request.getUsername(), link));
-
-        return token;
+                registrationDto.getEmail(),
+                buildEmail(registrationDto.getUsername(), link));
+        
+        return newUser;
     }
 
     @Transactional
@@ -48,10 +128,18 @@ public class RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        userService.enableUser(
-                confirmationToken.getUser().getEmail());
+        enableUser(confirmationToken.getUser().getEmail());
         return "confirmed";
     }
+
+    public void enableUser(String email) {
+        try {
+          userRepository.enableUser(email);
+        } catch (Exception e) {
+             logger.error("Failed to enable user with email: {}", email);
+             throw new UserNotFoundException("User not found with email: " + email);
+        }
+     }
 
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +

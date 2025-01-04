@@ -7,76 +7,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.precious.UserApi.dto.user.UserRequestDto;
-import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.repository.UserRepository;
-import com.precious.UserApi.service.ConfirmationTokenService;
+
+import lombok.RequiredArgsConstructor;
+
 import com.precious.UserApi.exception.*;
-import com.precious.UserApi.model.ConfirmationToken;
 import com.precious.UserApi.model.enums.UserRole;
 import com.precious.UserApi.model.user.User;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final ConfirmationTokenService confirmationTokenService;
 
-    public UserService(
-            UserRepository userRepository,
-            PasswordEncoder passwordEncoder,
-            ConfirmationTokenService confirmationTokenService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.confirmationTokenService = confirmationTokenService;
-    }
-
-    @Override
-    public String registerUser(UserRegistrationDto registrationDto) {
-        // Validate unique email and username
-        if (userRepository.existsByEmail(registrationDto.getEmail())) {
-            logger.warn("Attempted registration with existing email: {}", registrationDto.getEmail());
-            throw new UserAlreadyExistsException("Email is already in use");
-        }
-
-        if (userRepository.existsByUsername(registrationDto.getUsername())) {
-            logger.warn("Attempted registration with existing username: {}", registrationDto.getUsername());
-            throw new UserAlreadyExistsException("Username is already in use");
-        }
-
-        // Create new user
-        User newUser = new User(
-                registrationDto.getUsername(),
-                registrationDto.getEmail(),
-                passwordEncoder.encode(registrationDto.getPassword()),
-                registrationDto.getRole());
-
-        User savedUser = userRepository.save(newUser);
-
-        logger.info("New user registered: {} with role {}", savedUser.getUsername(), savedUser.getRole());
-
-        String token = UUID.randomUUID().toString();
-
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                newUser);
-
-        confirmationTokenService.saveConfirmationToken(
-                confirmationToken);
-        return token;
-    }
 
     @Override
     public User getUserById(Long userId) {
@@ -181,14 +134,5 @@ public class UserService implements IUserService {
         } catch (Exception e) {
             throw new UserNotFoundException("User not found with ID: " + userId);
         }
-    }
-
-    public void enableUser(String email) {
-       try {
-         userRepository.enableUser(email);
-       } catch (Exception e) {
-            logger.error("Failed to enable user with email: {}", email);
-            throw new UserNotFoundException("User not found with email: " + email);
-       }
     }
 }

@@ -1,6 +1,6 @@
 package com.precious.UserApi.service.user;
 
-import com.precious.UserApi.dto.user.UserRegistrationDto;
+
 import com.precious.UserApi.dto.user.UserResponseDto;
 import com.precious.UserApi.dto.user.UserRequestDto;
 import com.precious.UserApi.model.enums.UserRole;
@@ -10,9 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface IUserService {
-    // User Registration
-    String registerUser(UserRegistrationDto registrationDto);
-
     // User Management
     User getUserById(Long id);
     UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto);
