@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task History</title>
+  <link rel="stylesheet" href="transaction-history.css">
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Side Navigation -->
+    <nav class="header-nav">
+      <ul>
+        <li><a href="../index.html">Dashboard</a></li>
+        <li><a href="task-history.html">Task History</a></li>
+        <li><a href="payment.html">Payment</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+      </ul>
+    </nav>
+    
+<div class="main-content">
+  <div class="transaction-history-container">
+    <h2>Transaction History</h2>
+    
+    <!-- Search and Filter Section -->
+    <div class="search-filter">
+      <input type="text" id="search-bar" placeholder="Search transactions...">
+      <button class="filter-button">Filter</button>
+    </div>
+
+    <!-- Transaction Table -->
+    <table class="transaction-history-table">
+      <thead>
+        <tr>
+          <th>Transaction ID</th>
+          <th>Date</th>
+          <th>Type</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Sample Data -->
+        <tr>
+          <td>#12345</td>
+          <td>2024-12-01</td>
+          <td>Payment</td>
+          <td>1 BTC</td>
+          <td><span class="status completed">Completed</span></td>
+          <td><a href="/transaction-details.html" class="view-details">View Details</a></td>
+        </tr>
+        <tr>
+          <td>#12346</td>
+          <td>2024-12-02</td>
+          <td>Refund</td>
+          <td>0.5 ETH</td>
+          <td><span class="status in-progress">Processing</span></td>
+          <td><a href="/transaction-details.html" class="view-details">View Details</a></td>
+        </tr>
+        <!-- Add more rows as necessary -->
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button>&laquo; Previous</button>
+      <button class="active">1</button>
+      <button>2</button>
+      <button>3</button>
+      <button>Next &raquo;</button>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+</html>

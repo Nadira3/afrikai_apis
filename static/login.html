@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AfrikAI Login/Signup</title>
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <img src="assets/logo.png" alt="AfrikAI Logo">
+    </div>
+    <div id="form-container">
+      <!-- Login Form -->
+      <div id="login-form">
+        <form>
+          <div class="form-input">
+            <input type="text" placeholder="Username or Email" required>
+          </div>
+          <div class="form-input">
+            <input type="password" placeholder="Password" required>
+          </div>
+          <button type="submit" class="action-button">Login</button>
+        </form>
+        <div class="footer">
+          Don’t have an account? <a href="#" onclick="toggleForm('signup')">Sign Up</a>
+        </div>
+      </div>
+      <!-- Signup Form -->
+      <div id="signup-form" style="display: none;">
+        <form>
+          <div class="form-input">
+            <input type="text" placeholder="Full Name" required>
+          </div>
+          <div class="form-input">
+            <input type="email" placeholder="Email" required>
+          </div>
+	  <div class="form-input">
+		  <label for="role">Select Role:</label>
+		  <select id="role" name="role" required>
+			  <option value="">--Choose a Role--</option>
+			  <option value="client">Client</option>
+			  <option value="worker">Worker</option>
+		  </select>
+	  </div>
+          <div class="form-input">
+            <input type="password" placeholder="Create Password" required>
+          </div>
+          <div class="form-input">
+            <input type="password" placeholder="Confirm Password" required>
+          </div>
+          <button type="submit" class="action-button">Sign Up</button>
+        </form>
+        <div class="footer">
+          Already have an account? <a href="#" onclick="toggleForm('login')">Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="script/login.js"></script>
+</body>
+</html>

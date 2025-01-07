@@ -1,0 +1,164 @@
+/* Transaction History Page */
+/* Header Navigation */
+.header-nav {
+  width: 100%;
+  background: #FF6600;
+  padding: 15px 20px;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.header-nav ul li {
+  margin: 0;
+}
+
+.header-nav ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 15px;
+  border-radius: 8px;
+  transition: background 0.3s;
+}
+
+.header-nav ul li a:hover,
+.header-nav ul li a.active {
+  background: white;
+  color: #FF6600;
+}
+.transaction-history-container {
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+.transaction-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.transaction-history-table th,
+.transaction-history-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.transaction-history-table th {
+  background: #FF6600;
+  color: white;
+  font-weight: bold;
+}
+
+.transaction-history-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.status.in-progress {
+  background: #ffcc00;
+  color: #333;
+}
+
+.status.completed {
+  background: #4CAF50;
+  color: white;
+}
+
+.view-details {
+  color: #FF6600;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.view-details:hover {
+  text-decoration: underline;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  background: white;
+  color: #FF6600;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+.pagination button:hover {
+  background: #FF6600;
+  color: white;
+}
+
+.pagination .active {
+  background: #FF6600;
+  color: white;
+}
+
+/* Search and Filter */
+.search-filter {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-filter input {
+  width: 70%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.search-filter .filter-button {
+  padding: 10px 15px;
+  background: #FF6600;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.search-filter .filter-button:hover {
+  background: #e65c00;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .transaction-history-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .pagination {
+    flex-direction: column;
+  }
+}

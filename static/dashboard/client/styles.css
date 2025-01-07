@@ -1,0 +1,193 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9f9f9;
+}
+
+/* Navigation Menu */
+.nav-menu {
+  width: 250px;
+  background-color: #FF6600;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  position: fixed;
+  height: 100%;
+}
+
+.nav-menu .logo {
+  width: 120px;
+  margin-bottom: 20px;
+}
+
+.nav-menu ul {
+  list-style: none;
+  width: 100%;
+}
+
+.nav-menu ul li {
+  margin: 15px 0;
+}
+
+.nav-menu ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  display: block;
+}
+
+.nav-menu .profile {
+  margin-top: auto;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 260px;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Task Overview */
+.task-overview {
+  margin-bottom: 30px;
+}
+
+.task-overview .cards {
+  display: flex;
+  gap: 20px;
+}
+
+.task-overview .card {
+  background: #FFF;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  flex: 1;
+  transition: transform 0.3s ease-in-out;
+}
+
+.task-overview .card:hover {
+  transform: scale(1.05);
+}
+
+/* Task Categories */
+.task-categories .category-grid {
+  display: flex;
+  gap: 20px;
+}
+
+.task-categories .category {
+  background: #FFF;
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s;
+}
+
+.task-categories .category:hover {
+  background: #FF6600;
+  color: white;
+}
+
+/* Call-to-Action */
+.cta {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.cta .upload-btn {
+  background-color: #FF6600;
+  color: white;
+  padding: 15px 30px;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.cta .upload-btn:hover {
+  background-color: #e65500;
+}
+
+/* Wallet Balance */
+.wallet-balance {
+  background: #FFF;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Payment Link Section */
+.payment-link {
+  background: #FFF;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.payment-link h2 {
+  margin-bottom: 10px;
+  color: #FF6600;
+}
+
+.payment-link p {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.payment-btn {
+  background-color: #FF6600;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.payment-btn:hover {
+  background-color: #e65500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-menu {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 10px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 10px;
+  }
+
+  .task-overview .cards,
+  .task-categories .category-grid {
+    flex-direction: column;
+  }
+}
