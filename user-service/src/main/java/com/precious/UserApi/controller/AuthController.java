@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.dto.AuthRequest;
 import com.precious.UserApi.dto.AuthResponse;
+import com.precious.UserApi.dto.user.UserRegistrationDto;
 import com.precious.UserApi.service.AuthenticationService;
 
 import jakarta.validation.Valid;
