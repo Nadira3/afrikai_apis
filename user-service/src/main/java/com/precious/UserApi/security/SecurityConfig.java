@@ -33,8 +33,9 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/eureka/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/error").permitAll()
+                // .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )

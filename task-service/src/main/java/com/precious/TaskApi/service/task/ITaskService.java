@@ -1,29 +1,42 @@
 package com.precious.TaskApi.service.task;
 
+import java.util.UUID;
 
-import com.precious.TaskApi.dto.task.TaskCreationDto;
+import com.precious.TaskApi.dto.task.TaskRequest;
 import com.precious.TaskApi.model.task.Task;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ITaskService {
     // Task Creation
-    Task createTask(TaskCreationDto request, String clientId);
-    // // Task Discovery
-    // List<Task> findAvailableTasks();
-    // List<Task> findTasksByCategory(TaskCategory category);
+    Task createTask(TaskRequest request, String clientId);
+    
+    void deleteAll();
 
-    // // Task Assignment
+    Task getTaskById(UUID id);
 
-    // // Task Execution
-    // Task submitTask(Long taskId, String submissionDetails);
+    Page<Task> getTaskByClientId(String clientId, Pageable pageable);
 
-    // // Task Review
-    // Task reviewTask(Long taskId, boolean approved, double qualityScore);
+    Page<Task> getTaskByUserId(Long userId, Pageable pageable);
 
-    // // Task Management
-    // Task cancelTask(Long taskId);
-    // void deleteTask(Long taskId);
+    Page<Task> getAllTasks(Pageable pageable);
 
-    // // Retrieval Methods
-    // Task getTaskById(Long taskId);
+    Page<Task> getTasksByCategory(String category, Pageable pageable);
+
+    Page<Task> getTasksByStatus(String status, Pageable pageable);
+
+    Page<Task> getTasksByPriority(int priority, Pageable pageable);
+
+    Task updateTaskById(UUID id, TaskRequest request);
+
+    Task deleteTaskById(UUID id);
+
+    Task assignTask(UUID id, String users);
+
+    Task completeTask(UUID id);
+
+    Task processTask(UUID id, String category);
+
+    
 }

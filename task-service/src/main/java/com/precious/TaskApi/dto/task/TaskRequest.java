@@ -12,14 +12,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.precious.TaskApi.model.enums.TaskCategory;
 
-// Task Creation DTO
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskCreationDto {
+public class TaskRequest {
     // File uploaded by the client
     @NotNull(message = "Task file is required")
-    private MultipartFile file;
+    private MultipartFile mainTaskFile;
+
+    @NotBlank(message = "Instruction is required")
+    private String instructions;
 
     // Title and description of the task
     @NotBlank(message = "Title is required")
