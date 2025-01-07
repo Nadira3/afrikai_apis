@@ -1,14 +1,13 @@
 package com.precious.TaskApi.controller;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.springframework.boot.actuate.web.exchanges.HttpExchange.Principal;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +29,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.http.MediaType;
-
 @RestController
 @RequestMapping("/api/tasks")
 @Slf4j
@@ -40,14 +37,15 @@ public class TaskController {
     private final TaskService taskService;
 
     // Endpoint to upload a new task
-    @PostMapping(value = "/upload/{clientId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('CLIENT')")
+    @PostMapping(value = "/upload")
     public ResponseEntity<TaskResponse> uploadTask(
             @ModelAttribute @Valid TaskRequest request,
-            @PathVariable String clientId,
+            @AuthenticationPrincipal UserDetails userDetails,
             UriComponentsBuilder uriComponentsBuilder) {
 
-        // // Extract the logged-in user
-        // String clientId = principal.getName(); // Assumes username is the clientId
+        // Extract the logged-in user
+        String clientId = userDetails.getUsername(); // Assumes username is the clientId
 
         // Use the service layer to create the task
         Task task = taskService.createTask(request, clientId);
@@ -106,7 +104,7 @@ public class TaskController {
 
     // Enpoint to get task by UserId
     // This endpoint is used to get all tasks assigned to a user
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<Page<TaskResponse>> getTaskByUserId(@PathVariable Long userId, Pageable pageable) {
         try {
             // Fetch paginated tasks by category
@@ -136,7 +134,7 @@ public class TaskController {
      * This endpoint is only accessible to admin users
      * The admin user is determined by the role of the user
      */
-    @GetMapping
+    @GetMapping({"", "/"})
     public ResponseEntity<Page<TaskResponse>> getAllTasks(Pageable pageable) {
         Page<TaskResponse> tasksPage = taskService.getAllTasks(pageable)
                 .map(TaskResponse::fromEntity);
@@ -268,6 +266,7 @@ public class TaskController {
      * The task is assigned to each user in the list
      */
     @PostMapping("/{id}/assign")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TaskResponse> assignTask(@PathVariable UUID id, @RequestParam String users) {
         // Use the service layer to assign the task to the list of users
         Task task = taskService.assignTask(id, users);
@@ -313,6 +312,7 @@ public class TaskController {
      * The task is sent to the processing queue of the corresponding category
      */
     @PostMapping("/{id}/process")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TaskResponse> processTask(@PathVariable UUID id, @RequestParam String category) {
         // Use the service layer to process the task
         Task task = taskService.processTask(id, category);

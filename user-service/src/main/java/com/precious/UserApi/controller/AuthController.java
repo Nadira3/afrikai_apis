@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import com.precious.UserApi.dto.AuthRequest;
 import com.precious.UserApi.dto.AuthResponse;
 import com.precious.UserApi.dto.user.UserRegistrationDto;
+import com.precious.UserApi.dto.user.UserValidationResponse;
 import com.precious.UserApi.service.AuthenticationService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -38,5 +40,9 @@ public class AuthController {
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
+    @GetMapping("/validate")
+    public ResponseEntity<UserValidationResponse> validateToken(HttpServletRequest request) {
+        return ResponseEntity.ok(authenticationService.validateToken(request.getHeader("Authorization")));
+    }
 
 }
