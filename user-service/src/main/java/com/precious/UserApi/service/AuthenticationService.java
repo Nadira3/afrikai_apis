@@ -52,10 +52,14 @@ public class AuthenticationService {
     }
 
 
-    public UserValidationResponse validateToken(String authHeader) {
-        String token = authHeader.substring(7);
+    public UserValidationResponse validateToken(String token) {
+        if (token == null || token.isEmpty()) {
+            logger.warn("Token is null or empty");
+            throw new IllegalArgumentException("JWT passed String argument cannot be null or empty.");
+        }
         try {
             if (!jwtService.isTokenExpired(token)) {
+                logger.info("Token: {} is not expired", token);
                 String username = jwtService.extractUsername(token);
 
                 User user = userRepository.findByEmail(username)
@@ -63,12 +67,15 @@ public class AuthenticationService {
 
                 CustomUserDetails userDetails = new CustomUserDetails(user);
 
+                logger.info("Validating token for user: {}", user.getUsername());
+
                 if (jwtService.isTokenValid(token, userDetails)) {
                 return UserValidationResponse.builder()
                     .userId(user.getId())
                     .role(user.getRole().toString())
                     .token(token)
                     .isValid(true)
+                    .isEnabled(user.isEnabled())
                     .build();
                 } else {
                     throw new IllegalArgumentException("Invalid Token");
@@ -82,6 +89,7 @@ public class AuthenticationService {
                 .role(null)
                 .token(token)
                 .isValid(false)
+                .isEnabled(false)
                 .build();
     }
 

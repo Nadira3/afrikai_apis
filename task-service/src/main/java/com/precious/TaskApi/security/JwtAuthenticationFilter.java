@@ -47,33 +47,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         
         try {
+            String token = authHeader.substring(7);
             ResponseEntity<UserValidationResponse> validationResponse = 
-                userServiceClient.validateToken(request);
+                userServiceClient.validateToken(token);
             
-            if (validationResponse.getStatusCode().is2xxSuccessful() && 
-                validationResponse.getBody().isValid()) {
+            if (validationResponse.getStatusCode().is2xxSuccessful()
+                    && validationResponse.getBody() != null 
+                    && validationResponse.getBody().isValid()) 
+            {
                     
                 UserValidationResponse userDetails = validationResponse.getBody();
                 
-                List<SimpleGrantedAuthority> authorities = List.of(
-                    new SimpleGrantedAuthority("ROLE_" + userDetails.getRole())
-                );
-                
-                // Create custom user details with userId
-                CustomUserDetails customUserDetails = new CustomUserDetails(
-                    userDetails.getUserId(),
-                    userDetails.getRole(),
-                    authorities
-                );
-                
-                UsernamePasswordAuthenticationToken authentication = 
-                    new UsernamePasswordAuthenticationToken(
-                        customUserDetails, // principal is now CustomUserDetails
-                        null,
+                if (userDetails != null) {
+                    List<SimpleGrantedAuthority> authorities = List.of(
+                        new SimpleGrantedAuthority("ROLE_" + userDetails.getRole())
+                    );
+                    
+                    // Create custom user details with userId
+                    CustomUserDetails customUserDetails = new CustomUserDetails(
+                        userDetails.getUserId(),
+                        userDetails.getRole(),
                         authorities
                     );
-                
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    
+                    UsernamePasswordAuthenticationToken authentication = 
+                        new UsernamePasswordAuthenticationToken(
+                            customUserDetails, // principal is now CustomUserDetails
+                            null,
+                            authorities
+                        );
+                    
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } else {
+                    log.error("User details not found in response");
+                    throw new Exception("User details not found in response");
+                }
             }
         } catch (Exception e) {
             log.error("JWT validation failed: {}", e.getMessage());

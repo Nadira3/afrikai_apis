@@ -14,4 +14,5 @@ public class UserValidationResponse {
     private String role;
     private String token;
     private boolean isValid;
+    private boolean isEnabled;
 }
