@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataImportRequestDto {
+public class DataImportRequest {
 
     @NotNull(message = "File is required")
     private MultipartFile file;

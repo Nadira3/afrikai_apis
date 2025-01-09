@@ -14,7 +14,7 @@ import java.util.UUID;
  * It contains the import ID, file name, total records, import status, and the time the import was completed.
 `* @See DataImport
  */
-public record DataImportResponseDto(
+public record DataImportResponse(
     UUID importId,
     String fileName,
     Integer totalRecords,
@@ -22,8 +22,8 @@ public record DataImportResponseDto(
     LocalDateTime importedAt
 ) {
     // Static factory method to create from entity
-    public static DataImportResponseDto fromEntity(DataImport entity) {
-        return new DataImportResponseDto(
+    public static DataImportResponse fromEntity(DataImport entity) {
+        return new DataImportResponse(
             entity.getId(),
             entity.getFileName(),
             entity.getTotalRecords(),

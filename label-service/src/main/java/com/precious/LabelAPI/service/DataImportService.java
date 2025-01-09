@@ -1,7 +1,7 @@
 package com.precious.LabelAPI.service;
 
-import com.precious.LabelAPI.dto.DataImportRequestDto;
-import com.precious.LabelAPI.dto.DataImportResponseDto;
+import com.precious.LabelAPI.dto.DataImportRequest;
+import com.precious.LabelAPI.dto.DataImportResponse;
 import com.precious.LabelAPI.model.enums.FileType;
 import com.precious.LabelAPI.model.enums.ImportStatus;
 import com.precious.LabelAPI.exceptions.FileProcessingException;
@@ -22,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -43,13 +42,11 @@ import reactor.core.publisher.Mono;
 public class DataImportService {
 
     private final Map<FileType, DataImportStrategy> importStrategies;
-    private final ExternalEntityService externalEntityService;
     private final DataImportRepository dataImportRepository;
     private final PromptResponsePairRepository promptResponsePairRepository;
 
     public DataImportService(
             List<DataImportStrategy> strategies,
-            ExternalEntityService externalEntityService,
             DataImportRepository dataImportRepository,
             PromptResponsePairRepository promptResponsePairRepository) {
         /**
@@ -85,7 +82,6 @@ public class DataImportService {
                         DataImportStrategy::getSupportedFileType, // Key mapper extracts supported file type
                         Function.identity() // Identity function returns the element itself
                 ));
-        this.externalEntityService = externalEntityService;
         this.dataImportRepository = dataImportRepository;
         this.promptResponsePairRepository = promptResponsePairRepository;
     }
@@ -101,40 +97,35 @@ public class DataImportService {
      */
     // The method processes a file upload request for a specific client and returns
     // the result wrapped in Mono.
-    public Mono<DataImportResponseDto> importData(DataImportRequestDto requestDto) {
-        MultipartFile file = requestDto.getFile();
-        UUID clientId = requestDto.getClientId();
+    public Mono<DataImportResponse> importData(DataImportRequest request) {
+        MultipartFile file = request.getFile();
+        String clientId = request.getClientId();
+        return Mono.fromCallable(() -> {
+            try {
+                // Determine file type and get appropriate strategy
+                FileType fileType = FileManagerUtil.determineFileType(file.getOriginalFilename());
+                DataImportStrategy strategy = importStrategies.get(fileType);
 
-        return Mono.defer(() -> // Defer execution until subscription
-        externalEntityService.getClientReference(clientId)
-                .flatMap(client -> {
-                    try {
-                        // Determine file type and get appropriate strategy
-                        FileType fileType = FileManagerUtil.determineFileType(file.getOriginalFilename());
-                        DataImportStrategy strategy = importStrategies.get(fileType);
+                // If the file type is not supported, throw error
+                if (strategy == null) {
+                    throw new UnsupportedFileTypeException(fileType.name());
+                }
 
-                        // If the file type is not supported, throw error
-                        if (strategy == null) {
-                            return Mono.error(new UnsupportedFileTypeException(fileType.name()));
-                        }
+                // Create import record
+                DataImport dataImport = new DataImport(file.getOriginalFilename(), fileType);
+                dataImport.setClientId(clientId);
+                dataImport.setImportStatus(ImportStatus.PROCESSING);
 
-                        // Create import record
-                        DataImport dataImport = new DataImport(file.getOriginalFilename(), fileType);
-                        dataImport.setClientId(clientId);
-                        dataImport.setImportStatus(ImportStatus.PROCESSING);
-
-                        // Save the initial import record
-                        return Mono.fromCallable(() -> dataImportRepository.save(dataImport))
-                                .flatMap(savedDataImport ->
-                        // Process file reactively and update status
-                        processFile(file, strategy, savedDataImport)
-                                .map(fileProcessed -> DataImportResponseDto.fromEntity(savedDataImport)) // Map to
-                                                                                                         // response DTO
-                        );
-                    } catch (Exception e) {
-                        return Mono.error(new FileProcessingException(e.getMessage()));
-                    }
-                }));
+                // Save the initial import record
+                return dataImportRepository.save(dataImport);
+            } catch (Exception e) {
+                throw new FileProcessingException(e.getMessage());
+            }
+        }).flatMap(savedDataImport ->
+            // Process file reactively and update status
+            processFile(file, importStrategies.get(FileManagerUtil.determineFileType(file.getOriginalFilename())), savedDataImport)
+                .map(fileProcessed -> DataImportResponse.fromEntity(savedDataImport)) // Map to response DTO
+        );
     }
 
     /**
@@ -143,7 +134,7 @@ public class DataImportService {
      * 2. Processes file using strategy
      * 3. Saves the result and updates status
      */
-    private Mono<DataImportResponseDto> processFile(MultipartFile file, DataImportStrategy strategy,
+    private Mono<DataImportResponse> processFile(MultipartFile file, DataImportStrategy strategy,
             DataImport dataImport) {
         return Mono.fromCallable(() -> {
             // Validate file format
@@ -164,20 +155,20 @@ public class DataImportService {
                 promptResponsePairRepository.saveAll(pairs);
                 dataImportRepository.save(dataImport);
 
-                return DataImportResponseDto.fromEntity(dataImport);
+                return DataImportResponse.fromEntity(dataImport);
 
             } catch (FileValidationException e) {
                 log.error("File validation failed for import {}: {}", dataImport.getId(), e.getMessage());
                 updateImportStatus(dataImport, ImportStatus.FAILED);
-                return DataImportResponseDto.fromEntity(dataImport);
+                return DataImportResponse.fromEntity(dataImport);
             } catch (FileProcessingException e) {
                 log.error("File processing failed for import {}: {}", dataImport.getId(), e.getMessage());
                 updateImportStatus(dataImport, ImportStatus.FAILED);
-                return DataImportResponseDto.fromEntity(dataImport);
+                return DataImportResponse.fromEntity(dataImport);
             } catch (Exception e) {
                 log.error("Unexpected error processing import {}: {}", dataImport.getId(), e.getMessage());
                 updateImportStatus(dataImport, ImportStatus.FAILED);
-                return DataImportResponseDto.fromEntity(dataImport);
+                return DataImportResponse.fromEntity(dataImport);
             }
         }).doOnError(e -> {
             log.error("Unexpected error processing import {}: {}", dataImport.getId(), e.getMessage());

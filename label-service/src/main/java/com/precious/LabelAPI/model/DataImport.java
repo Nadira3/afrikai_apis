@@ -27,11 +27,11 @@ import com.precious.LabelAPI.util.FileManagerUtil;
 @Table(name = "data_imports")
 public class DataImport {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "client_id", nullable = false)
-    private UUID clientId;
+    private String clientId;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;
