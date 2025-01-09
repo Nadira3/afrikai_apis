@@ -54,7 +54,7 @@ public class DataImport {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "import_status", nullable = false)
-    private ImportStatus importStatus;
+    private ImportStatus importStatus = ImportStatus.PENDING;
 
     @OneToMany(mappedBy = "dataImport", cascade = CascadeType.ALL)
     private List<PromptResponsePair> promptResponsePairs;
@@ -74,8 +74,23 @@ public class DataImport {
         this.filePath = FileManagerUtil.getCurrentDirectoryFile(fileName).getAbsolutePath();
         this.fileType = filetype;
         this.importedAt = LocalDateTime.now();
-        this.promptResponsePairs = new ArrayList<>(promptResponsePairs);
+	this.promptResponsePairs = promptResponsePairs != null ? new ArrayList<>(promptResponsePairs) : new ArrayList<>();
         this.processedRecords = 0;
         this.totalRecords = promptResponsePairs.size();
+    }
+
+    @Override
+    public String toString() {
+	return "DataImport{" +
+		"id=" + id +
+		", clientId='" + clientId + '\'' +
+		", fileName='" + fileName + '\'' +
+		", filePath='" + filePath + '\'' +
+		", fileType=" + fileType +
+		", totalRecords=" + totalRecords +
+		", processedRecords=" + processedRecords +
+		", importedAt=" + importedAt +
+		", importStatus=" + importStatus +
+		'}';
     }
 }

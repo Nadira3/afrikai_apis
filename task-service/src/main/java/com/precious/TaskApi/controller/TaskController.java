@@ -311,7 +311,7 @@ public class TaskController {
      * The category is passed as a request parameter
      * The task is sent to the processing queue of the corresponding category
      */
-    @PostMapping("/{id}/process")
+    @PostMapping("/{taskId}/process")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<TaskResponse> processTask(@PathVariable UUID taskId) {
         // Use the service layer to process the task

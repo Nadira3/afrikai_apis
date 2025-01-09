@@ -99,23 +99,30 @@ public class DataImportService {
     // the result wrapped in Mono.
     public Mono<DataImportResponse> importData(DataImportRequest request) {
         MultipartFile file = request.getFile();
+	log.info("Processing file: {}", file.getOriginalFilename());
         String clientId = request.getClientId();
         return Mono.fromCallable(() -> {
             try {
                 // Determine file type and get appropriate strategy
                 FileType fileType = FileManagerUtil.determineFileType(file.getOriginalFilename());
+		log.info("File type: {}", fileType);
                 DataImportStrategy strategy = importStrategies.get(fileType);
 
                 // If the file type is not supported, throw error
                 if (strategy == null) {
+			log.error("Unsupported file type: {}", fileType.name());
+			log.error("Supported file types: {}", importStrategies.keySet());
+			log.info("Strategy is null");
                     throw new UnsupportedFileTypeException(fileType.name());
                 }
 
+		log.info("Strategy: {}", strategy.getSupportedFileType());
                 // Create import record
                 DataImport dataImport = new DataImport(file.getOriginalFilename(), fileType);
                 dataImport.setClientId(clientId);
                 dataImport.setImportStatus(ImportStatus.PROCESSING);
 
+		log.info("Data import: {}", dataImport.toString());
                 // Save the initial import record
                 return dataImportRepository.save(dataImport);
             } catch (Exception e) {
@@ -149,7 +156,7 @@ public class DataImportService {
                 // Update import with results
                 dataImport.setTotalRecords(pairs.size());
                 dataImport.setProcessedRecords(pairs.size());
-                dataImport.setImportStatus(ImportStatus.COMPLETED);
+                dataImport.setImportStatus(ImportStatus.SUCCESS);
 
                 // Save all pairs and update import
                 promptResponsePairRepository.saveAll(pairs);

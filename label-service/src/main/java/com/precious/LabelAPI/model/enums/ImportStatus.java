@@ -6,6 +6,6 @@ package com.precious.LabelAPI.model.enums;
 public enum ImportStatus {
     PENDING,
     PROCESSING,
-    COMPLETED,
+    SUCCESS,
     FAILED
 }

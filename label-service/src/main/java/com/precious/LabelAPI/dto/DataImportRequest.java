@@ -23,5 +23,5 @@ public class DataImportRequest {
     private String clientId;
 
     @NotBlank(message = "Task ID is required")
-    private UUID taskId;
+    private String taskId;
 }

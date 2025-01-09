@@ -49,7 +49,9 @@ public class TaskService implements ITaskService {
     public ResponseEntity<DataImportResponse> sendFileToLabelService(UUID taskId, String clientId, String filePath) throws IOException {
 	
         // Create MultipartFile from the file in parent directory
-        File file = new File(filePath);
+        File file = new File("upload-dir/" + filePath);
+	log.info("File path: {}", file.getAbsolutePath());
+	log.info("File name: {}", file.getName());
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile(
             file.getName(),
@@ -221,6 +223,7 @@ public class TaskService implements ITaskService {
     @Transactional
     public Task processTask(UUID taskId) {
         Task task = taskRepository.findById(taskId).orElse(null);
+	log.info("Processing task: {} with file: {} ", task.getTitle(), task.getMainFileUrl());
 
         try {
 		if (task == null) {
@@ -232,7 +235,7 @@ public class TaskService implements ITaskService {
 
 	// check if response from sendFileToLabelService is successful, then set status to AVAILABLE, otherwise FAILED
 	    ResponseEntity<DataImportResponse> response = sendFileToLabelService(taskId, task.getClientId(), task.getMainFileUrl());
-	    if (response.getStatusCode() == HttpStatus.OK) {
+	    if (response.getStatusCode() == HttpStatus.CREATED) {
 		task.setStatus(TaskStatus.AVAILABLE);
 		task.setImportId(response.getBody().getImportId());
 	    } else {
@@ -245,7 +248,7 @@ public class TaskService implements ITaskService {
 	    // return updated task
             return taskRepository.save(task);
         } catch (Exception e) {
-            log.error("File processing error: ", e.getMessage());
+            log.error("File processing error: ", e);
             return null;
         }
     }
