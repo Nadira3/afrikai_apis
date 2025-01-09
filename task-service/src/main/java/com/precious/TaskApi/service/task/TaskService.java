@@ -7,6 +7,9 @@ import com.precious.TaskApi.model.enums.TaskStatus;
 import com.precious.TaskApi.repository.TaskRepository;
 import com.precious.TaskApi.service.StorageService;
 import com.precious.TaskApi.service.task.TaskService;
+import com.precious.TaskApi.feign.LabelServiceClient;
+import com.precious.TaskApi.dto.DataImportRequest;
+import com.precious.TaskApi.dto.DataImportResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
+import org.apache.commons.io.IOUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +43,27 @@ public class TaskService implements ITaskService {
     
     private final TaskRepository taskRepository;
     private final StorageService storageService;
+    private final LabelServiceClient labelServiceClient;
+
+    @Override
+    public ResponseEntity<DataImportResponse> sendFileToLabelService(UUID taskId, String clientId, String filePath) throws IOException {
+	
+        // Create MultipartFile from the file in parent directory
+        File file = new File(filePath);
+        FileInputStream input = new FileInputStream(file);
+        MultipartFile multipartFile = new MockMultipartFile(
+            file.getName(),
+            file.getName(),
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            IOUtils.toByteArray(input)
+        );
+        
+        // Create request DTO
+        DataImportRequest request = new DataImportRequest(multipartFile, clientId, taskId);
+        
+        // Send request to Label Service
+        return labelServiceClient.importData(request);
+    }
 
     @Override
     @Transactional
@@ -183,19 +219,33 @@ public class TaskService implements ITaskService {
 
     @Override
     @Transactional
-    public Task processTask(UUID id, String category) {
-        Task task = taskRepository.findById(id).orElse(null);
-        if (task == null) {
-            return null;
-        }
+    public Task processTask(UUID taskId) {
+        Task task = taskRepository.findById(taskId).orElse(null);
 
         try {
-            TaskCategory taskCategory = TaskCategory.valueOf(category.toUpperCase());
-            task.setCategory(taskCategory);
-            task.setStatus(TaskStatus.AVAILABLE);
+		if (task == null) {
+			// log error
+			log.error("Task not found");
+			// throw exception
+			throw new IllegalArgumentException("Task not found");
+		}
+
+	// check if response from sendFileToLabelService is successful, then set status to AVAILABLE, otherwise FAILED
+	    ResponseEntity<DataImportResponse> response = sendFileToLabelService(taskId, task.getClientId(), task.getMainFileUrl());
+	    if (response.getStatusCode() == HttpStatus.OK) {
+		task.setStatus(TaskStatus.AVAILABLE);
+		task.setImportId(response.getBody().getImportId());
+	    } else {
+		// log warning before setting importId to null
+		task.setStatus(TaskStatus.FAILED);
+		log.warn("Failed to process task: {}", taskId);
+		task.setImportId(null);
+	    }
+
+	    // return updated task
             return taskRepository.save(task);
-        } catch (IllegalArgumentException e) {
-            log.error("Invalid category: {}", category);
+        } catch (Exception e) {
+            log.error("File processing error: ", e.getMessage());
             return null;
         }
     }

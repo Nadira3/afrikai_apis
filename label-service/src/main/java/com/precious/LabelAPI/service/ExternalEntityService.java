@@ -26,9 +26,7 @@ import reactor.core.publisher.Mono;
 @Service
 @Slf4j
 public class ExternalEntityService {
-	private final WebClient taskServiceClient;
-	private final WebClient clientServiceClient;
-	private final CircuitBreaker circuitBreaker;
+	private final UserServiceClient userServiceClient;
 
 	public ExternalEntityService(@Qualifier("taskServiceClient") WebClient taskServiceClient,
 			@Qualifier("clientServiceClient") WebClient clientServiceClient, CircuitBreaker circuitBreaker) {
@@ -63,7 +61,6 @@ public class ExternalEntityService {
 		 * The result of the task service call is wrapped in a Mono
 		 */
 		return Mono.fromSupplier(() -> circuitBreaker.executeSupplier(() -> taskServiceClient.get()
-				.uri("/api/v1/tasks/{id}", taskId)
 				.retrieve()
 
 				/**
@@ -116,7 +113,6 @@ public class ExternalEntityService {
 	 */
 	public Mono<ClientReferenceDto> getClientReference(UUID clientId) {
 		return clientServiceClient.get()
-				.uri("/api/v1/clients/{id}", clientId)
 				.retrieve()
 				.onStatus(
 						HttpStatusCode::is4xxClientError,

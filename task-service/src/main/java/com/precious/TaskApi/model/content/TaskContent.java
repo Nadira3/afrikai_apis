@@ -25,7 +25,7 @@ import jakarta.persistence.Entity;
 public class TaskContent {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     
     @Column(name = "question", columnDefinition = "TEXT")

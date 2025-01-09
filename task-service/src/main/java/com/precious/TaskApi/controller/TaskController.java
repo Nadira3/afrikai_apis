@@ -313,9 +313,9 @@ public class TaskController {
      */
     @PostMapping("/{id}/process")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaskResponse> processTask(@PathVariable UUID id, @RequestParam String category) {
+    public ResponseEntity<TaskResponse> processTask(@PathVariable UUID taskId) {
         // Use the service layer to process the task
-        Task task = taskService.processTask(id, category);
+        Task task = taskService.processTask(taskId);
 
         // check if the task is processed
         if (task == null) {

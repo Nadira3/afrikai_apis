@@ -49,37 +49,16 @@ public class DataImportController {
         this.dataExportService = dataExportService;
     }
 
-    @PostMapping("/upload")
-    public Mono<ResponseEntity<DataImportResponseDto>> importData(
-            @Valid @ModelAttribute DataImportRequestDto dataImportRequestDto,
-            UriComponentsBuilder ucb) {
+    @PostMapping("/import")
+    public ResponseEntity<DataImportResponseDto>> importData(
+            @Valid @ModelAttribute DataImportRequestDto dataImportRequestDto) {
 
         // Ensure the importData method from service is returning
         // Mono<DataImportResponseDto>
         return dataImportService.importData(dataImportRequestDto)
-                .map(response -> {
-                    // Ensure response has the importId() method
-                    URI location = ucb.path("/api/tasks/label/id/{id}")
-                            .buildAndExpand(response.importId()) // Ensure importId() is valid
-                            .toUri();
-
-                    // Return ResponseEntity with created URI and body
-                    return ResponseEntity.created(location)
-                            .body(response); // response should be of type DataImportResponseDto
-                })
-                .onErrorResume(e -> {
-                    // Ensure error handling creates a proper error response
-                    DataImportResponseDto errorResponse = new DataImportResponseDto(
-                            UUID.randomUUID(), // This could be a different value for error reporting
-                            "Error processing file", // More specific error message
-                            0, // Could adjust this depending on the failed import
-                            ImportStatus.FAILED, // Reflects the failure status
-                            LocalDateTime.now());
-
-                    // Return error response as Mono
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(errorResponse));
-                });
+		.map(dataImportResponseDto -> ResponseEntity.created(URI.create("/api/label/" + dataImportResponseDto.getId()))
+			.body(dataImportResponseDto))
+		.defaultIfEmpty(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
     @GetMapping("/api/prompt-response-pairs")

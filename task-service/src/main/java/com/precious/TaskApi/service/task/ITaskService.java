@@ -4,11 +4,17 @@ import java.util.UUID;
 
 import com.precious.TaskApi.dto.task.TaskRequest;
 import com.precious.TaskApi.model.task.Task;
+import com.precious.TaskApi.dto.DataImportResponse;
+
+import java.io.IOException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 public interface ITaskService {
+    ResponseEntity<DataImportResponse> sendFileToLabelService(UUID taskId, String clientId, String filePath) throws IOException;
+
     // Task Creation
     Task createTask(TaskRequest request, String clientId);
     
@@ -36,7 +42,7 @@ public interface ITaskService {
 
     Task completeTask(UUID id);
 
-    Task processTask(UUID id, String category);
+    Task processTask(UUID taskId);
 
     
 }

@@ -1,4 +1,4 @@
-package com.precious.LabelAPI.dto;
+package com.precious.TaskApi.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataImportRequestDto {
+public class DataImportRequest {
 
     @NotNull(message = "File is required")
     private MultipartFile file;
