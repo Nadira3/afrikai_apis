@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.precious.TaskApi.dto.task.TaskRequest;
 import com.precious.TaskApi.dto.task.TaskResponse;
+import com.precious.TaskApi.dto.DataImportResponse;
 import com.precious.TaskApi.model.task.Task;
 import com.precious.TaskApi.service.task.TaskService;
 
@@ -313,16 +314,16 @@ public class TaskController {
      */
     @PostMapping("/{taskId}/process")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<TaskResponse> processTask(@PathVariable UUID taskId) {
+    public ResponseEntity<DataImportResponse> processTask(@PathVariable UUID taskId) {
         // Use the service layer to process the task
-        Task task = taskService.processTask(taskId);
+        DataImportResponse response = taskService.processTask(taskId);
 
         // check if the task is processed
-        if (task == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(TaskResponse.toErrorTemplate("Task not found"));
+        if (response == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(DataImportResponse.toErrorTemplate("Task processing failed"));
         }
 
         // Return the task if processed
-        return ResponseEntity.ok(TaskResponse.fromEntity(task));
+        return ResponseEntity.ok(response);
     }
 }

@@ -25,4 +25,15 @@ public class DataImportResponse {
     private Integer totalRecords;
     private ImportStatus status;
     private LocalDateTime importedAt;
+
+    public static DataImportResponse toErrorTemplate(String message) {
+	    return new DataImportResponse(
+			    null,
+			    message,
+			    0,
+			    ImportStatus.FAILED,
+			    LocalDateTime.now()
+			);
+    }
+
 }

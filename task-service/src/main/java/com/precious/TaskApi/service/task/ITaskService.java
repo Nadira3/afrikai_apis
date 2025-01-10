@@ -42,7 +42,7 @@ public interface ITaskService {
 
     Task completeTask(UUID id);
 
-    Task processTask(UUID taskId);
+    DataImportResponse processTask(UUID taskId);
 
     
 }

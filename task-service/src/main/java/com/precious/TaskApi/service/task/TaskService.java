@@ -221,7 +221,7 @@ public class TaskService implements ITaskService {
 
     @Override
     @Transactional
-    public Task processTask(UUID taskId) {
+    public DataImportResponse processTask(UUID taskId) {
         Task task = taskRepository.findById(taskId).orElse(null);
 	log.info("Processing task: {} with file: {} ", task.getTitle(), task.getMainFileUrl());
 
@@ -245,8 +245,11 @@ public class TaskService implements ITaskService {
 		task.setImportId(null);
 	    }
 
-	    // return updated task
-            return taskRepository.save(task);
+	    // save updated task
+            taskRepository.save(task);
+
+	    // return import response
+	    return response.getBody();
         } catch (Exception e) {
             log.error("File processing error: ", e);
             return null;
