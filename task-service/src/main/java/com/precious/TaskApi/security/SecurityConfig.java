@@ -29,8 +29,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())  // Disable CSRF protection
             .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                .requestMatchers("/api/tasks/upload").hasRole("CLIENT")
-                .requestMatchers("/api/tasks/*/process").hasRole("ADMIN")  // Allow all requests
+                .requestMatchers("/api/client/**").hasRole("CLIENT")
+                .requestMatchers("/api/user/**").hasRole("TASKER")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .sessionManagement(sessionManagement -> sessionManagement

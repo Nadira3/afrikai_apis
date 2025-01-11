@@ -31,24 +31,35 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/tasks")
+@RequestMapping("/api/user/tasks")
 @Slf4j
 @RequiredArgsConstructor
-public class TaskController {
+public class UserController {
     private final TaskService taskService;
 
-    // Endpoint to get task by id
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskResponse> getTaskById(@PathVariable UUID id) {
-        // Use the service layer to get the task by id
-        Task task = taskService.getTaskById(id);
+    // Endpoint to get task by UserId
+    // This endpoint is used to get all tasks assigned to a user
+    @GetMapping("/{userId}")
+    public ResponseEntity<Page<TaskResponse>> getTasksByUserId(@PathVariable Long userId, Pageable pageable) {
+        try {
+            // Fetch paginated tasks by category
+            Page<Task> tasksPage = taskService.getTaskByUserId(userId, pageable);
 
-        // check if the task is found
-        if (task == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(TaskResponse.toErrorTemplate("Task not found"));
+            // Check if no tasks are found
+            if (tasksPage == null || tasksPage.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Page.empty());
+            }
+
+            // Convert the page of tasks into a page of TaskResponse
+            Page<TaskResponse> taskResponsesPage = tasksPage.map(TaskResponse::fromEntity);
+
+            // Return paginated response
+            return ResponseEntity.ok(taskResponsesPage);
+        } catch (Exception e) {
+            // Handle any unexpected exceptions and return a proper error message
+            log.error("Error fetching tasks by category: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Page.empty());
         }
-
-        // Return the task if found
-        return ResponseEntity.ok(TaskResponse.fromEntity(task));
     }
 }
