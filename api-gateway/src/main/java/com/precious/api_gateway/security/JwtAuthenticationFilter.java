@@ -1,4 +1,4 @@
-package com.precious.TaskApi.security;
+package com.precious.api_gateway.security;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,8 +10,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.precious.TaskApi.dto.UserValidationResponse;
-import com.precious.TaskApi.feign.UserServiceClient;
+import com.precious.api_gateway.dto.UserValidationResponse;
+import com.precious.api_gateway.feign.UserServiceClient;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,19 +19,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.lang.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     
     private final UserServiceClient userServiceClient;
+
+    // constructor
+    public JwtAuthenticationFilter(UserServiceClient userServiceClient) {
+        this.userServiceClient = userServiceClient;
+    }
     
     @Override
     protected void doFilterInternal(
@@ -60,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 
                 if (userDetails != null) {
                     List<SimpleGrantedAuthority> authorities = List.of(
-                        new SimpleGrantedAuthority("ROLE_" + userDetails.getRole())
+                        new SimpleGrantedAuthority(userDetails.getRole())
                     );
                     
                     // Create custom user details with userId

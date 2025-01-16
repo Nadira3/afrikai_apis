@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * type(Csv, json, xls, xlsx) to the database.
  */
 @RestController
-@RequestMapping("/api/label")
+@RequestMapping("/api/labels/client")
 public class DataImportController {
 
     private final DataImportService dataImportService;

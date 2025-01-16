@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/api/label")
+@RequestMapping("/api/labels/user")
 public class LabelController {
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String getHomePage() {
            return "Welcome to Label API";
     }

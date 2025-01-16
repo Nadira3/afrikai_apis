@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/user/tasks")
+@RequestMapping("/api/tasks/user")
 @Slf4j
 @RequiredArgsConstructor
 public class UserController {

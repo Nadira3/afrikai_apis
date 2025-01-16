@@ -31,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/client/tasks")
+@RequestMapping("/api/tasks/admin")
 @Slf4j
 @RequiredArgsConstructor
 public class AdminController {

@@ -1,4 +1,4 @@
-package com.precious.TaskApi.dto;
+package com.precious.api_gateway.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

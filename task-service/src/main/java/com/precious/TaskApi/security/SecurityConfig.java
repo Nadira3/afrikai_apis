@@ -8,16 +8,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.precious.TaskApi.feign.UserServiceClient;
-
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
-    private final UserServiceClient userServiceClient;
 
     /**
      * @param http
@@ -28,19 +24,12 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())  // Disable CSRF protection
-            .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                .requestMatchers("/api/client/**").hasRole("CLIENT")
-                .requestMatchers("/api/user/**").hasRole("TASKER")
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(sessionManagement -> sessionManagement
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/tasks/client/**").hasRole("CLIENT")
+                .requestMatchers("/api/tasks/user/**").hasRole("TASKER")
+                .requestMatchers("/api/tasks/admin/**").hasRole("ADMIN")
+                .anyRequest().permitAll()
+            );
         return http.build();
     }
-        @Bean
-        public JwtAuthenticationFilter jwtAuthenticationFilter() {
-            return new JwtAuthenticationFilter(userServiceClient);
-        }
-    }
+}

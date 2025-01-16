@@ -1,4 +1,4 @@
-package com.precious.TaskApi.security;
+package com.precious.api_gateway.security;
 
 import java.util.Collection;
 

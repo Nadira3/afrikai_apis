@@ -15,12 +15,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF protection
-            .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll()  // Permit all requests
-            );
-        
-        return http.build();
+        .csrf(csrf -> csrf.disable())  // Disable CSRF protection
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/labels/client/**").hasRole("CLIENT")
+            .requestMatchers("/api/labels/user/**").hasRole("TASKER")
+            .requestMatchers("/api/labels/admin/**").hasRole("ADMIN")
+            .anyRequest().permitAll()
+        );
+    return http.build();
     }
 
     @Bean
