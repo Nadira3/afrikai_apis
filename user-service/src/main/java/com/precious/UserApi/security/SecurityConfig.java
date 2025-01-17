@@ -53,8 +53,8 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://TASK-SERVICE/**")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedOrigins("http://localhost:8080")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("Authorization", "Content-Type", "Accept")
                         .exposedHeaders("Authorization")
                         .allowCredentials(true);

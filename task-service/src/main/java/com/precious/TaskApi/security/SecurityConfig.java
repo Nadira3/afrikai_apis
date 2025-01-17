@@ -25,7 +25,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())  // Disable CSRF protection
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/tasks/client/**").hasRole("CLIENT")
+		.requestMatchers("/api/tasks/client/**").hasRole("CLIENT")
                 .requestMatchers("/api/tasks/user/**").hasRole("TASKER")
                 .requestMatchers("/api/tasks/admin/**").hasRole("ADMIN")
                 .anyRequest().permitAll()

@@ -1,95 +1,68 @@
 package com.precious.api_gateway.security;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
 import com.precious.api_gateway.dto.UserValidationResponse;
-import com.precious.api_gateway.feign.UserServiceClient;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.lang.NonNull;
-
+import com.precious.api_gateway.feign.ReactiveUserServiceClient;
+import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 @Component
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    
+public class JwtAuthenticationFilter implements WebFilter {
     private static final Logger log = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
-    
-    private final UserServiceClient userServiceClient;
+    private final ReactiveUserServiceClient userServiceClient;
 
-    // constructor
-    public JwtAuthenticationFilter(UserServiceClient userServiceClient) {
+    public JwtAuthenticationFilter(ReactiveUserServiceClient userServiceClient) {
         this.userServiceClient = userServiceClient;
     }
-    
+
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain) throws ServletException, IOException {
-            
-        String authHeader = request.getHeader("Authorization");
-        
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
+            return chain.filter(exchange);
         }
-        
-        try {
-            String token = authHeader.substring(7);
-            ResponseEntity<UserValidationResponse> validationResponse = 
-                userServiceClient.validateToken(token);
-            
-            if (validationResponse.getStatusCode().is2xxSuccessful()
-                    && validationResponse.getBody() != null 
-                    && validationResponse.getBody().isValid()) 
-            {
-                    
-                UserValidationResponse userDetails = validationResponse.getBody();
-                
-                if (userDetails != null) {
+
+        String token = authHeader.substring(7);
+
+        return userServiceClient.validateToken(token)
+            .flatMap(response -> {
+                UserValidationResponse userDetails = response.getBody();
+                if (userDetails != null && userDetails.isValid()) {
                     List<SimpleGrantedAuthority> authorities = List.of(
-                        new SimpleGrantedAuthority(userDetails.getRole())
+                        new SimpleGrantedAuthority("ROLE_" + userDetails.getRole())
                     );
-                    
-                    // Create custom user details with userId
+
                     CustomUserDetails customUserDetails = new CustomUserDetails(
                         userDetails.getUserId(),
                         userDetails.getRole(),
                         authorities
                     );
-                    
-                    UsernamePasswordAuthenticationToken authentication = 
+
+                    UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
-                            customUserDetails, // principal is now CustomUserDetails
+                            customUserDetails,
                             null,
                             authorities
                         );
-                    
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                } else {
-                    log.error("User details not found in response");
-                    throw new Exception("User details not found in response");
+
+                    return chain.filter(exchange)
+                        .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
                 }
-            }
-        } catch (Exception e) {
-            log.error("JWT validation failed: {}", e.getMessage());
-        }
-        
-        filterChain.doFilter(request, response);
+                return chain.filter(exchange);
+            })
+            .onErrorResume(e -> {
+                log.error("JWT validation failed: {}", e.getMessage());
+                return chain.filter(exchange);
+            });
     }
 }

@@ -20,11 +20,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+
+    // Constructor
+    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService) {
+	this.jwtService = jwtService;
+	this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void doFilterInternal(

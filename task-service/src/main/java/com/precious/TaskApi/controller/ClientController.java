@@ -56,7 +56,7 @@ public class ClientController {
         }
 
         // Build the URI for the newly created task
-        URI location = uriComponentsBuilder.path("/api/tasks/{id}").buildAndExpand(task.getId()).toUri();
+        URI location = uriComponentsBuilder.path("/api/tasks/client/{id}").buildAndExpand(task.getId()).toUri();
 
         // Return the task and the location if task is created successfully
         return ResponseEntity.created(location).body(TaskResponse.fromEntity(task));

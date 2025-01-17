@@ -143,7 +143,7 @@ public class AuthenticationService {
         confirmationTokenService.saveConfirmationToken(
                 confirmationToken);
 
-        String link = "http://user-service/api/auth/register/confirm?token=" + token;
+        String link = "http://localhost:8081/api/auth/register/confirm?token=" + token;
         emailSender.send(
                 registrationDto.getEmail(),
                 buildEmail(registrationDto.getUsername(), link));
