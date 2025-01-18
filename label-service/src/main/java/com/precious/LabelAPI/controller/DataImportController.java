@@ -63,7 +63,7 @@ public class DataImportController {
     @GetMapping("/prompt-response-pairs")
     public Page<PromptResponsePair> getPromptResponsePairs(
             @RequestParam(defaultValue = "0") int page, 
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "1") int size) {
         return dataExportService.getAllPromptResponsePairs(Pageable.ofSize(size).withPage(page));
     }
 

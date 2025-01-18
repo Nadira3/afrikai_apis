@@ -7,5 +7,6 @@ public enum ProcessingStatus {
     PENDING,
     LABELED,
     SKIPPED,
+    REVIEWED,
     ERROR
 }

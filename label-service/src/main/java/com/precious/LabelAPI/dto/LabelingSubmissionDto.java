@@ -7,7 +7,7 @@ import java.util.UUID;
  * DTO for submitting labeling data
  */
 public record LabelingSubmissionDto(
-    UUID taskId,
+    UUID pairId, // PromptResponsePair ID
     Integer generalRating,
     Integer helpfulnessRating,
     Integer honestyRating,
@@ -37,7 +37,6 @@ public record LabelingSubmissionDto(
     // Helper method to convert DTO to entity
     public DataLabelingSubmission toEntity() {
         DataLabelingSubmission entity = new DataLabelingSubmission();
-        entity.setTaskId(this.taskId);
         entity.setGeneralRating(this.generalRating);
         entity.setHelpfulnessRating(this.helpfulnessRating);
         entity.setHonestyRating(this.honestyRating);
