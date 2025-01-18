@@ -1,19 +1,24 @@
 package com.precious.api_gateway.security;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
-import com.precious.api_gateway.dto.UserValidationResponse;
-import com.precious.api_gateway.feign.ReactiveUserServiceClient;
-import reactor.core.publisher.Mono;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.List;
-import org.springframework.http.ResponseEntity;
+
+import com.precious.api_gateway.dto.UserValidationResponse;
+import com.precious.api_gateway.feign.ReactiveUserServiceClient;
+
+import reactor.core.publisher.Mono;
 
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
@@ -54,9 +59,21 @@ public class JwtAuthenticationFilter implements WebFilter {
                             null,
                             authorities
                         );
+		    
+		    // Inject user details into the request
+		    ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
+			.header("X-User-Id", userDetails.getUserId().toString())
+			.header("X-User-Role", userDetails.getRole())
+			.build();
 
-                    return chain.filter(exchange)
-                        .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+                    // Mutate the exchange with the new request
+		    ServerWebExchange mutatedExchange = exchange.mutate()
+			    .request(mutatedRequest)
+			    .build();
+
+		    return chain.filter(mutatedExchange)
+			    .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+
                 }
                 return chain.filter(exchange);
             })
