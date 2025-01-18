@@ -8,6 +8,8 @@ import com.precious.LabelAPI.service.LabelService;
 
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
 @RequestMapping("/api/labels/user")
+@RequiredArgsConstructor
 public class LabelController {
+
+    private final LabelService labelService;
 
     @GetMapping("/home")
     public String getHomePage() {
@@ -26,14 +31,14 @@ public class LabelController {
 
     @PostMapping("/{taskId}/submit")
     public String submitLabel(@RequestBody LabelingSubmissionDto submission, @PathVariable UUID taskId) {
-	DataLabelingSubmission response = LabelService.submitLabel(submission, taskId);
-	return response ? "Label submitted successfully" : "Failed to submit label";
+	DataLabelingSubmission response = labelService.submitLabel(submission, taskId);
+	return response != null ? "Label submitted successfully" : "Failed to submit label";
     }
 
     @PostMapping("/{taskId}/review")
     public String reviewLabel(@RequestBody ReviewRequest review, @PathVariable UUID taskId) {
-	    DataLabelingSubmission response = LabelService.reviewLabel(review, taskId);
-	    return response ? "Label reviewed successfully" : "Failed to review label";
+	    DataLabelingSubmission response = labelService.reviewLabel(review, taskId);
+	    return response != null ? "Label reviewed successfully" : "Failed to review label";
     }
 
 }
