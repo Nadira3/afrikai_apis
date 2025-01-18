@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AfrikAI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
+            <img src="assets/logo.png" alt="AfrikAI Logo" class="logo">
+            <ul>
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="manage-tasks.html">Manage Tasks</a></li>
+                <li><a href="manage-users.html">Manage Users</a></li>
+                <li><a href="task-assignment.html">Task Assignment</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><a href="settings.html">Settings</a></li>
+            </ul>
+            <div class="profile">
+                <img src="assets/admin-avatar.png" alt="Admin Avatar" class="avatar">
+                <span>Admin Panel</span>
+                <p class="admin-role">Super Admin</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <div class="header-actions">
+                    <button class="create-user-btn">
+                        <i class="fas fa-user-plus"></i> Create User
+                    </button>
+                    <button class="create-task-btn">
+                        <i class="fas fa-plus"></i> Create Task
+                    </button>
+                </div>
+            </header>
+
+            <!-- Task Search and Filters -->
+            <section class="search-filters">
+                <div class="search-container">
+                    <input type="text" id="taskSearch" placeholder="Search tasks by ID or title...">
+                    <div class="filter-group">
+                        <select id="statusFilter">
+                            <option value="">Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select id="categoryFilter">
+                            <option value="">Category</option>
+                            <option value="data_entry">Data Entry</option>
+                            <option value="content">Content</option>
+                            <option value="research">Research</option>
+                        </select>
+                        <select id="priorityFilter">
+                            <option value="">Priority</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                        <button id="applyFilters">Apply Filters</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Task Statistics -->
+            <section class="task-stats">
+                <div class="stat-card">
+                    <h3>Total Tasks</h3>
+                    <p class="stat-number">124</p>
+                    <p class="stat-trend positive">↑ 12 this week</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Active Users</h3>
+                    <p class="stat-number">45</p>
+                    <p class="stat-trend positive">↑ 5 this week</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Pending Assignment</h3>
+                    <p class="stat-number">18</p>
+                    <p class="stat-trend negative">↑ 3 from yesterday</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Completion Rate</h3>
+                    <p class="stat-number">92%</p>
+                    <p class="stat-trend positive">↑ 2% this month</p>
+                </div>
+            </section>
+
+            <!-- Task List -->
+            <section class="task-list-section">
+                <div class="section-header">
+                    <h2>All Tasks</h2>
+                    <div class="pagination-info">
+                        Showing <span id="startRecord">1</span>-<span id="endRecord">10</span> of <span id="totalRecords">124</span>
+                    </div>
+                </div>
+                <div class="task-table-container">
+                    <table class="task-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="taskTableBody">
+                            <!-- Tasks will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <!-- Pagination will be populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Create User Modal -->
+    <div id="createUserModal" class="modal">
+        <div class="modal-content">
+            <h2>Create New User</h2>
+            <form id="createUserForm">
+                <div class="form-group">
+                    <label for="userName">Full Name</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">Email</label>
+                    <input type="email" id="userEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userRole">Role</label>
+                    <select id="userRole" required>
+                        <option value="admin">Admin</option>
+                        <option value="user">User</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">Cancel</button>
+                    <button type="submit" class="submit-btn">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Task Assignment Modal -->
+    <div id="taskAssignmentModal" class="modal">
+        <div class="modal-content">
+            <h2>Assign Tasks</h2>
+            <div class="task-assignment-container">
+                <div class="selected-tasks">
+                    <h3>Selected Tasks</h3>
+                    <ul id="selectedTasksList">
+                        <!-- Selected tasks will be listed here -->
+                    </ul>
+                </div>
+                <div class="available-users">
+                    <h3>Available Users</h3>
+                    <div class="user-search">
+                        <input type="text" placeholder="Search users...">
+                    </div>
+                    <div class="user-list" id="availableUsersList">
+                        <!-- Available users will be listed here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn">Cancel</button>
+                <button class="assign-btn">Assign Tasks</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>

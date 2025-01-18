@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - AfrikAI</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Navigation Menu -->
+        <nav class="nav-menu">
+            <img src="../assets/logo.png" alt="AfrikAI Logo" class="logo">
+            <ul>
+                <li><a href="#" class="active">Dashboard</a></li>
+                <li><a href="my-tasks.html">My Tasks</a></li>
+                <li><a href="task-history.html">Task History</a></li>
+                <li><a href="faq.html">FAQ</a></li>
+                <li><a href="help.html">Help</a></li>
+                <li><a href="profile.html">Profile</a></li>
+            </ul>
+            <div class="profile">
+                <img src="assets/default-avatar.png" alt="User Avatar" class="avatar">
+                <span>Sarah Johnson</span>
+                <p class="user-balance">Balance: $350.00</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header class="dashboard-header">
+                <h1>Welcome, Sarah</h1>
+                <div class="header-actions">
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search tasks...">
+                        <button class="search-btn"><i class="fas fa-search"></i></button>
+                    </div>
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Task Statistics -->
+            <section class="task-stats">
+                <div class="stat-card">
+                    <h3>Active Tasks</h3>
+                    <p class="stat-number">5</p>
+                    <p class="stat-trend positive">↑ 2 from last week</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Completed Today</h3>
+                    <p class="stat-number">3</p>
+                    <p class="stat-trend positive">↑ 1 from yesterday</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Earnings This Month</h3>
+                    <p class="stat-number">$420.00</p>
+                    <p class="stat-trend positive">↑ $120 from last month</p>
+                </div>
+            </section>
+
+            <!-- Current Tasks -->
+            <section class="current-tasks">
+                <div class="section-header">
+                    <h2>Current Tasks</h2>
+                    <button class="view-all-btn">View All</button>
+                </div>
+                <div class="task-list">
+                    <!-- Task cards will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="recent-activity">
+                <h2>Recent Activity</h2>
+                <div class="activity-feed">
+                    <!-- Activity items will be populated by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+</html>
