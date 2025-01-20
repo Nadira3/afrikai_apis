@@ -12,6 +12,7 @@ import com.precious.api_gateway.feign.ReactiveUserServiceClient;
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+    // Inject the user service client
     private final ReactiveUserServiceClient userServiceClient;
 
     public SecurityConfig(ReactiveUserServiceClient userServiceClient) {
@@ -21,15 +22,28 @@ public class SecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         return http
-            .csrf(ServerHttpSecurity.CsrfSpec::disable)
+            .csrf(ServerHttpSecurity.CsrfSpec::disable) // Disable CSRF
             .authorizeExchange(exchanges -> exchanges
-                .pathMatchers("/api/auth/**").permitAll()
-                .anyExchange().authenticated()
+		.pathMatchers(
+			"/swagger-ui/**",
+			"/swagger-ui.html/**",
+			"/webjars/**",
+			"/v3/api-docs/**",
+			"/api/auth/**"
+			)
+		.permitAll() // Allow access to the Swagger UI and the authentication endpoint
+                .anyExchange().authenticated() // Require authentication for all other requests
             )
             .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
             .build();
     }
 
+    /**
+     * @return a new instance of the JwtAuthenticationFilter
+     * @see JwtAuthenticationFilter
+     * @see ReactiveUserServiceClient
+     * @see UserServiceClient
+     */
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter(userServiceClient);

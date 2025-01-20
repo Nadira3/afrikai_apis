@@ -11,8 +11,15 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
+
     private final Long userId;
     private final String role;
+
+    /**
+     * This authorities is a collection of roles that the user has. This is used by
+     * the Spring Security to check if the user has the required role to access the
+     * endpoint.
+     */
     private final Collection<? extends GrantedAuthority> authorities;
 
     @Override
