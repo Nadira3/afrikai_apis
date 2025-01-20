@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  title: Eureka Service Registry API
+  version: 1.0.0
+  description: API documentation for the Eureka Service Registry.
+
+servers:
+  - url: http://localhost:8761
+    description: Local development server
+
+paths:
+  /eureka/apps/{service-name}:
+    get:
+      summary: Get details of a specific service
+      description: Retrieves detailed information about a specific service registered in the Eureka server.
+      parameters:
+        - name: service-name
+          in: path
+          required: true
+          description: The name of the service to retrieve.
+          schema:
+            type: string
+            example: API-GATEWAY
+      responses:
+        '200':
+          description: Details of the requested service.
+          content:
+            application/xml:
+              schema:
+                type: object
+                properties:
+                  application:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "API-GATEWAY"
+                      instance:
+                        type: object
+                        properties:
+                          instanceId:
+                            type: string
+                            example: "100.125.65.254:api-gateway"
+                          hostName:
+                            type: string
+                            example: "100.125.65.254"
+                          app:
+                            type: string
+                            example: "API-GATEWAY"
+                          ipAddr:
+                            type: string
+                            example: "100.125.65.254"
+                          status:
+                            type: string
+                            example: "UP"
+                          overriddenstatus:
+                            type: string
+                            example: "UNKNOWN"
+                          port:
+                            type: object
+                            properties:
+                              "@enabled":
+                                type: string
+                                example: "true"
+                              "#text":
+                                type: string
+                                example: "8080"
+                          securePort:
+                            type: object
+                            properties:
+                              "@enabled":
+                                type: string
+                                example: "false"
+                              "#text":
+                                type: string
+                                example: "443"
+                          countryId:
+                            type: integer
+                            example: 1
+                          dataCenterInfo:
+                            type: object
+                            properties:
+                              "@class":
+                                type: string
+                                example: "com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo"
+                              name:
+                                type: string
+                                example: "MyOwn"
+                          leaseInfo:
+                            type: object
+                            properties:
+                              renewalIntervalInSecs:
+                                type: integer
+                                example: 30
+                              durationInSecs:
+                                type: integer
+                                example: 90
+                              registrationTimestamp:
+                                type: integer
+                                example: 1737329625601
+                              lastRenewalTimestamp:
+                                type: integer
+                                example: 1737331364386
+                              evictionTimestamp:
+                                type: integer
+                                example: 0
+                              serviceUpTimestamp:
+                                type: integer
+                                example: 1737329624492
+                          metadata:
+                            type: object
+                            properties:
+                              management.port:
+                                type: integer
+                                example: 8080
+                          homePageUrl:
+                            type: string
+                            example: "http://100.125.65.254:8080/"
+                          statusPageUrl:
+                            type: string
+                            example: "http://100.125.65.254:8080/actuator/info"
+                          healthCheckUrl:
+                            type: string
+                            example: "http://100.125.65.254:8080/actuator/health"
+                          vipAddress:
+                            type: string
+                            example: "api-gateway"
+                          secureVipAddress:
+                            type: string
+                            example: "api-gateway"
+                          isCoordinatingDiscoveryServer:
+                            type: boolean
+                            example: false
+                          lastUpdatedTimestamp:
+                            type: integer
+                            example: 1737329625601
+                          lastDirtyTimestamp:
+                            type: integer
+                            example: 1737329623917
+                          actionType:
+                            type: string
+                            example: "ADDED"
+        '404':
+          description: Service not found.
+        '500':
+          description: Server error.
