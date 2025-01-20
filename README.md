@@ -192,27 +192,73 @@ void whenValidUser_thenReturnsJwtToken() throws Exception {
 ---
 
 ## 🌐 Architecture Diagram
+**proposed design**
+![Architectural Design](docs/images/architectural_design.jpg)
 
-+-----------------------+
-                          |   Service Registry    |
-                          |    (Eureka)          |
-                          +----------+-----------+
-                                     |
-          +--------------------------+--------------------------+
-          |                          |                          |
-+---------v----------+    +----------v---------+    +-----------v--------+
-|   API Gateway      |    |   User Service     |    |   Task Service     |
-| (Spring Cloud)     |    | (Auth, Users)      |    | (Task Management)  |
-+---------+----------+    +----------+---------+    +-----------+--------+
-          |                          |                          |
-          |                          |                          |
-          |                          |---------------------------
-          |                          |                          |
-          |                +---------v---------+                |
-          |                |   Label Service   |                |
-          |                | (Task Labels)     |                |
-          |                +-------------------+                |
-          +-----------------------------------------------------+
+**exexcution flow**
+```mermaid
+graph LR
+    A[Service Registry - Eureka] --> B[API Gateway]
+    
+    %% Microservices
+    B --> C[Task Service]
+    B --> D[Label Service]
+    B --> E[User Service]
+    B --> F[Payment Service]
+    
+    %% Databases
+    C --> G[Task Database]
+    D --> H[Label Database]
+    E --> I[User Database]
+    F --> J[Payment Database]
+    
+    %% Authentication
+    B --> K[Authentication and Authorization Service]
+    K --> L[JWT Authentication]
+    
+    %% Wallet System
+    E --> M[User Wallet]
+    F --> M
+    
+    %% Monitoring and Health Checks
+    B --> N[Monitoring Service]
+    N --> O[Health Check]
+    N --> P[Metrics]
+    
+    %% Subgraph Representation
+    subgraph Eureka [Service Registry - Eureka]
+        A
+    end
+
+    subgraph Gateway [API Gateway]
+        B
+    end
+
+    subgraph Services [Microservices]
+        C[Task Service]
+        D[Label Service]
+        E[User Service]
+        F[Payment Service]
+    end
+
+    subgraph Databases [Databases]
+        G[Task Database]
+        H[Label Database]
+        I[User Database]
+        J[Payment Database]
+    end
+    
+    subgraph Security [Security]
+        K[Authentication Service]
+        L[JWT Authentication]
+    end
+
+    subgraph Monitoring [Monitoring]
+        N[Monitoring Service]
+        O[Health Check]
+        P[Metrics]
+    end
+```
 
 ## Key Workflow:
 
