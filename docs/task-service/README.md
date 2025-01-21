@@ -211,7 +211,7 @@ Initiates task processing
 {
   "filePath": "string",
   "clientId": "string",
-  "taskId: ["uuid"]
+  "taskId": "uuid"
 }
 ```
 
@@ -219,7 +219,7 @@ Initiates task processing
 Marks task as complete
 ```json
 {
-  "taskId": uuid
+  "taskId": "uuid"
 }
 ```
 
