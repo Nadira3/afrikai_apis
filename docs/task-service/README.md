@@ -111,7 +111,7 @@ upload:
 ### Standard Installation
 ```bash
 # Clone the repository
-git clone https://github.com/Nadira3/afrikai-task-service.git
+git clone https://github.com/Nadira3/afrikai_apis.git
 
 # Navigate to project directory
 cd afrikai-task-service
