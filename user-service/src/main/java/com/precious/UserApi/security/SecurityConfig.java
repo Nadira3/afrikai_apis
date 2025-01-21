@@ -34,8 +34,15 @@ public class SecurityConfig {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/users/admin/**").hasRole("ADMIN")
+		.requestMatchers(
+			"/swagger-ui/**",
+			"/swagger-ui.html/**",
+			"/webjars/**",
+			"/v3/api-docs/**",
+			"/api/auth/**"
+		)
+		.permitAll() // Allow access to the Swagger UI and the authentication endpoint
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
