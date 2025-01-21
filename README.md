@@ -18,6 +18,7 @@ The **Afrikai Microservices System** is a modular, scalable, and secure task man
 ```bash
 afrikai_apis/
 ├── api-gateway/           # Centralized API Gateway for routing and security
+├── docs/                  # Documentation for all microservices
 ├── label-service/         # Microservice for managing labels
 ├── service-registry/      # Eureka-based service discovery
 ├── task-service/          # Microservice for managing tasks
