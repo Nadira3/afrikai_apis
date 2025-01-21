@@ -1,5 +1,13 @@
 package com.precious.TaskApi.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Content;
+
 import java.net.URI;
 import java.util.UUID;
 
@@ -34,11 +42,20 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/tasks")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "General", description = "Endpoints for task operations")
 public class TaskController {
     private final TaskService taskService;
 
     // Endpoint to get task by id
     @GetMapping("/{id}")
+
+    @Operation(summary = "Get task by id",
+	description = "Get a task by id",
+	responses = {
+	    @ApiResponse(responseCode = "200", description = "Task found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class))),
+	    @ApiResponse(responseCode = "404", description = "Task not found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponse.class)))
+	}
+    )
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable UUID id) {
         // Use the service layer to get the task by id
         Task task = taskService.getTaskById(id);

@@ -1,5 +1,7 @@
 package com.precious.TaskApi.dto.task;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -13,13 +15,28 @@ import lombok.Data;
 @Data
 @lombok.AllArgsConstructor
 @lombok.NoArgsConstructor
+@Schema(description = "Task Response Data Transfer Object")
 public class TaskResponse {
-    private UUID id; // UUID for created task if available
+
+    @Schema(description = "Task ID")
+    private UUID id;
+
+    @Schema(description = "Title of the task")
     private String title;
+
+    @Schema(description = "Description of the task")
     private String description;
+
+    @Schema(description = "Status of the task")
     private TaskStatus status;
+
+    @Schema(description = "Reward for the task")
     private double reward;
+
+    @Schema(description = "Timestamp of the task creation")
     private LocalDateTime createdAt;
+
+    @Schema(description = "Category of the task")
     private TaskCategory category;
 
     // Template to return for processing errors

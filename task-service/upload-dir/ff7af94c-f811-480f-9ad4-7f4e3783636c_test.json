@@ -1,0 +1,42 @@
+[
+  {
+    "prompt": "What is the capital of France?",
+    "response": "The capital of France is Paris."
+  },
+  {
+    "prompt": "Who wrote 'To Kill a Mockingbird'?",
+    "response": "Harper Lee wrote 'To Kill a Mockingbird'."
+  },
+  {
+    "prompt": "What is the formula for water?",
+    "response": "The chemical formula for water is H2O."
+  },
+  {
+    "prompt": "What is the square root of 64?",
+    "response": "The square root of 64 is 8."
+  },
+  {
+    "prompt": "Who painted the Mona Lisa?",
+    "response": "The Mona Lisa was painted by Leonardo da Vinci."
+  },
+  {
+    "prompt": "What is the largest planet in our solar system?",
+    "response": "The largest planet in our solar system is Jupiter."
+  },
+  {
+    "prompt": "What is the boiling point of water in Celsius?",
+    "response": "The boiling point of water is 100°C."
+  },
+  {
+    "prompt": "How many continents are there on Earth?",
+    "response": "There are seven continents on Earth."
+  },
+  {
+    "prompt": "What is the chemical symbol for gold?",
+    "response": "The chemical symbol for gold is Au."
+  },
+  {
+    "prompt": "What is the hardest natural substance on Earth?",
+    "response": "The hardest natural substance on Earth is diamond."
+  }
+]

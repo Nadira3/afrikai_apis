@@ -13,6 +13,6 @@ import com.precious.TaskApi.dto.DataImportResponse;
 
 @FeignClient(name = "LABEL-SERVICE")
 public interface LabelServiceClient {
-    @PostMapping(value = "/api/label/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/api/labels/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ResponseEntity<DataImportResponse> importData(@ModelAttribute DataImportRequest request);
 }

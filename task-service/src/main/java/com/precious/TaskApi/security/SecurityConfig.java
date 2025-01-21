@@ -34,6 +34,13 @@ public class SecurityConfig {
 		.requestMatchers("/api/tasks/client/**").hasRole("CLIENT")
                 .requestMatchers("/api/tasks/user/**").hasRole("TASKER")
                 .requestMatchers("/api/tasks/admin/**").hasRole("ADMIN")
+		.requestMatchers(
+			"/swagger-ui/**",
+			"/swagger-ui.html/**",
+			"/webjars/**",
+			"/v3/api-docs/**"
+		)
+		.permitAll() // Allow access to the Swagger UI and the authentication endpoint
                 .anyRequest().authenticated()
             );
         return http.build();

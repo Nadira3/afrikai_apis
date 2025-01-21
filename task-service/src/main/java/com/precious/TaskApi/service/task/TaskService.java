@@ -10,6 +10,8 @@ import com.precious.TaskApi.service.task.TaskService;
 import com.precious.TaskApi.feign.LabelServiceClient;
 import com.precious.TaskApi.dto.DataImportRequest;
 import com.precious.TaskApi.dto.DataImportResponse;
+import com.precious.TaskApi.exception.StorageException;
+import com.precious.TaskApi.exception.TaskProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -44,10 +49,12 @@ public class TaskService implements ITaskService {
     private final TaskRepository taskRepository;
     private final StorageService storageService;
     private final LabelServiceClient labelServiceClient;
+    private static final Logger log = LoggerFactory.getLogger(TaskService.class);
 
     @Override
     public ResponseEntity<DataImportResponse> sendFileToLabelService(UUID taskId, String clientId, String filePath) throws IOException {
-	
+
+	try {
         // Create MultipartFile from the file in parent directory
         File file = new File("upload-dir/" + filePath);
 	log.info("File path: {}", file.getAbsolutePath());
@@ -65,6 +72,10 @@ public class TaskService implements ITaskService {
         
         // Send request to Label Service
         return labelServiceClient.importData(request);
+	} catch (Exception e) {
+		log.error("Error sending file to label service: {}", e.getMessage());
+		throw new TaskProcessingException("Error sending file to label service");
+	}
     }
 
     @Override
@@ -85,8 +96,12 @@ public class TaskService implements ITaskService {
                     .createdAt(request.getCreatedAt())
                     .build();
 
+	    try{
             // Store the uploaded files and get their URLs
             mainFileUrl = storageService.store(request.getMainTaskFile(), task.getId());
+	    } catch (Exception e) {
+		throw new StorageException("Error saving task file");
+	    }
 
             // set main file URL
             task.setMainFileUrl(mainFileUrl);
@@ -94,7 +109,7 @@ public class TaskService implements ITaskService {
             return taskRepository.save(task);
         } catch (Exception e) {
             log.error("Error creating task: {}", e.getMessage());
-            return null;
+	    return null;
         }
     }
 
@@ -252,7 +267,7 @@ public class TaskService implements ITaskService {
 	    return response.getBody();
         } catch (Exception e) {
             log.error("File processing error: ", e);
-            return null;
+	    throw new TaskProcessingException("File processing error");
         }
     }
 
