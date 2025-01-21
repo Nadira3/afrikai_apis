@@ -96,7 +96,7 @@ Interactive API documentation is available via Swagger UI:
 - Swagger UI
 - Mermaid.js
 - Maven
-- PostgreSQL
+- MySQL
 
 ## License
 This project is licensed under the ALX Backend Curriculum license.
