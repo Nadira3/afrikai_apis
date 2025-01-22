@@ -1,5 +1,6 @@
 package com.precious.LabelAPI.service;
 
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.precious.LabelAPI.model.PromptResponsePair;
+import com.precious.LabelAPI.dto.PromptResponse;
 import com.precious.LabelAPI.model.enums.ProcessingStatus;
 import com.precious.LabelAPI.repository.PromptResponsePairRepository;
 
@@ -20,19 +22,55 @@ public class DataExportService {
     @Autowired
     private PromptResponsePairRepository promptResponsePairRepository;
 
-    public Page<PromptResponsePair> getAllPromptResponsePairs(Pageable pageable) {
-        return promptResponsePairRepository.findAll(pageable);
+    public Page<PromptResponse> getAllPromptResponsePairs(Pageable pageable) {
+	/**
+	  * Get all prompt response pairs from the database by page
+	  * @param pageable
+	  *
+	  * map each prompt response pair to a prompt response object
+	  * @return Page<PromptResponse>
+	  */
+	return promptResponsePairRepository.findAll(pageable)
+		    .map(pair -> PromptResponse.fromPromptResponsePair(pair));
     }
 
-    public PromptResponsePair getPromptResponsePairById(UUID id) {
-        return promptResponsePairRepository.findById(id).orElse(null);
+    public PromptResponse getPromptResponsePairById(UUID id) {
+        PromptResponsePair response = promptResponsePairRepository.findById(id).orElse(null);
+
+	if (response != null) {
+		return PromptResponse.fromPromptResponsePair(response);
+	} else {
+		return null;
+	}
     }
 
-    public List<PromptResponsePair> getPromptResponsePairsByDataImportId(UUID dataImportId) {
-        return promptResponsePairRepository.findByDataImportId(dataImportId);
+    public List<PromptResponse> getPromptResponsePairsByDataImportId(UUID dataImportId) {
+	    /**
+	     * Get all prompt response pairs with the same data import id from the database
+	     * @param dataImportId
+	     *
+	     * map each prompt response pair to a prompt response object
+	     * form a list of prompt response objects
+	     * @return List<PromptResponse>
+	     */
+	return promptResponsePairRepository.findByDataImportId(dataImportId)
+		    .stream()
+		    .map(pair -> PromptResponse.fromPromptResponsePair(pair))
+		    .collect(Collectors.toList());
     }
 
-    public List<PromptResponsePair> getPromptResponsePairsByProcessingStatus(ProcessingStatus status) {
-        return promptResponsePairRepository.findByProcessingStatus(status);
+    public List<PromptResponse> getPromptResponsePairsByProcessingStatus(ProcessingStatus status) {
+	/**
+	 * Get all prompt response pairs with the same processing status from the database
+	 * @param status
+	 *
+	 * map each prompt response pair to a prompt response object
+	 * form a list of prompt response objects
+	 * @return List<PromptResponse>
+	 */
+        return promptResponsePairRepository.findByProcessingStatus(status)
+		    .stream()
+        	    .map(pair -> PromptResponse.fromPromptResponsePair(pair))
+		    .collect(Collectors.toList());
     }
 }

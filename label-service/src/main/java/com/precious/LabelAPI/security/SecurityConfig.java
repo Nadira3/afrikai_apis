@@ -17,12 +17,10 @@ public class SecurityConfig {
         http
         .csrf(csrf -> csrf.disable())  // Disable CSRF protection
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/api/labels/client/**").hasRole("CLIENT")
-            .requestMatchers("/api/labels/user/**").hasRole("TASKER")
-            .requestMatchers("/api/labels/admin/**").hasRole("ADMIN")
-            .anyRequest().permitAll()
-        );
-    return http.build();
+			.anyRequest().permitAll()
+	);
+    
+	return http.build();
     }
 
     @Bean

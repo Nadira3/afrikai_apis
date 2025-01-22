@@ -5,6 +5,7 @@ import com.precious.LabelAPI.service.DataImportService;
 import com.precious.LabelAPI.dto.DataImportRequest;
 import com.precious.LabelAPI.dto.DataImportResponse;
 import com.precious.LabelAPI.model.PromptResponsePair;
+import com.precious.LabelAPI.dto.PromptResponse;
 import com.precious.LabelAPI.model.enums.ProcessingStatus;
 
 import jakarta.validation.Valid;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * type(Csv, json, xls, xlsx) to the database.
  */
 @RestController
-@RequestMapping("/api/labels/client")
+@RequestMapping("/api/labels")
 public class DataImportController {
 
     private final DataImportService dataImportService;
@@ -61,7 +62,7 @@ public class DataImportController {
 }
 
     @GetMapping("/prompt-response-pairs")
-    public Page<PromptResponsePair> getPromptResponsePairs(
+    public Page<PromptResponse> getPromptResponsePairs(
             @RequestParam(defaultValue = "0") int page, 
             @RequestParam(defaultValue = "1") int size) {
         return dataExportService.getAllPromptResponsePairs(Pageable.ofSize(size).withPage(page));
@@ -69,9 +70,9 @@ public class DataImportController {
 
     // Ensure the endpoint is returning a single PromptResponsePair
     @GetMapping("/prompt-response-pairs/{id}")
-    public ResponseEntity<PromptResponsePair> getPromptResponsePairById(@PathVariable UUID id) {
+    public ResponseEntity<PromptResponse> getPromptResponsePairById(@PathVariable UUID id) {
         // Ensure the service method is returning a Mono<PromptResponsePair>
-        PromptResponsePair pair = dataExportService.getPromptResponsePairById(id);
+        PromptResponse pair = dataExportService.getPromptResponsePairById(id);
         if (pair == null) {
             return ResponseEntity.notFound().build();
         }
@@ -79,8 +80,8 @@ public class DataImportController {
     }
 
     @GetMapping("/prompt-response-pairs/data-import/{id}")
-    public ResponseEntity<List<PromptResponsePair>> getPromptResponsePairByDataImportId(@PathVariable UUID id) {
-        List<PromptResponsePair> pairs = dataExportService.getPromptResponsePairsByDataImportId(id);
+    public ResponseEntity<List<PromptResponse>> getPromptResponsePairByDataImportId(@PathVariable UUID id) {
+        List<PromptResponse> pairs = dataExportService.getPromptResponsePairsByDataImportId(id);
         if (pairs == null) {
             return ResponseEntity.notFound().build();
         }
@@ -88,13 +89,13 @@ public class DataImportController {
     }
 
     @GetMapping("/prompt-response-pairs/processing-status/{status}")
-    public ResponseEntity<List<PromptResponsePair>> getPromptResponsePairByProcessingStatus(@PathVariable String status) {
-                List<PromptResponsePair> pairs = dataExportService.getPromptResponsePairsByProcessingStatus(ProcessingStatus.valueOf(status));
+    public ResponseEntity<List<PromptResponse>> getPromptResponsePairByProcessingStatus(@PathVariable String status) {
+                List<PromptResponse> pairs = dataExportService.getPromptResponsePairsByProcessingStatus(ProcessingStatus.valueOf(status));
                 if (pairs == null) {
                 return ResponseEntity.notFound().build();
                 }
                 return ResponseEntity.ok(pairs);
-        }
+    }
     
     
 

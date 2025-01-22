@@ -50,15 +50,18 @@ public class LabelService {
 					.orElseThrow(() -> new FailedReviewException("Submission not found"));
 			submission.setReview(review.review());
 
+
 			// Save entity to database
 			DataLabelingSubmission response = dataLabelingSubmissionRepository.save(submission);
 
 			// set pair processing status to reviewed
-			submission.getPromptResponsePair().setProcessingStatus(ProcessingStatus.REVIEWED);
+			PromptResponsePair pair = response.getPromptResponsePair();
+			pair.setProcessingStatus(ProcessingStatus.REVIEWED);
+			promptResponsePairRepository.save(pair);
 			return response;
 
 		} catch (Exception e) {
-			throw new FailedReviewException("Failed to review label");
+			throw new FailedReviewException("Failed to review label: " + e.getMessage());
 		}
 	}
 }
