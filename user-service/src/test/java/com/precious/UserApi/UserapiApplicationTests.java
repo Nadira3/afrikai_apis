@@ -1,4 +1,4 @@
-package com.precious.userapi;
+package com.precious.UserApi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
