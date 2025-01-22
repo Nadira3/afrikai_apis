@@ -44,9 +44,9 @@ public class LabelService {
 		}
 	}
 
-	public DataLabelingSubmission reviewLabel(ReviewRequest review, UUID subId) {
+	public DataLabelingSubmission reviewLabel(ReviewRequest review, UUID taskId) {
 		try {
-			DataLabelingSubmission submission = dataLabelingSubmissionRepository.findById(subId)
+			DataLabelingSubmission submission = dataLabelingSubmissionRepository.findById(review.submissionId())
 					.orElseThrow(() -> new FailedReviewException("Submission not found"));
 			submission.setReview(review.review());
 
