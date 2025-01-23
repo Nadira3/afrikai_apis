@@ -92,7 +92,7 @@ Docker (optional for deployment)
 
 1. **Clone the Repository**
 ```
-git clone https://github.com/your-username/afrikai_apis.git
+git clone https://github.com/Nadira3/afrikai_apis.git
 cd afrikai_apis
 ```
 
