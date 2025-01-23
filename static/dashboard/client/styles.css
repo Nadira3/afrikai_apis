@@ -18,23 +18,20 @@ body {
 }
 
 /* Navigation Menu */
-/* Navigation Menu */
 .nav-menu {
     width: 280px;
     background-color: #FF6600;
     color: white;
-    padding: 2.5rem 2rem; /* Increased padding for breathing space */
+    padding: 2rem;
     position: fixed;
     height: 100vh;
     display: flex;
     flex-direction: column;
-    transition: all 0.3s ease;
 }
 
-.nav-menu .logo {
-    width: 160px; /* Slightly larger logo for better proportion */
-    margin-bottom: 4rem; /* Increased margin for better separation */
-    transition: all 0.3s ease;
+.logo {
+    width: 150px;
+    margin-bottom: 3rem;
 }
 
 .nav-menu ul {
@@ -43,22 +40,22 @@ body {
 }
 
 .nav-menu ul li {
-    margin-bottom: 1.5rem; /* Increased space between items */
+    margin-bottom: 1rem;
 }
 
 .nav-menu ul li a {
     color: white;
     text-decoration: none;
-    font-size: 1.1rem; /* Slightly larger font for readability */
-    padding: 1.2rem 1rem; /* Increased padding inside links */
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
     border-radius: 8px;
     display: block;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
 }
 
-.nav-menu ul li a:hover {
+.nav-menu ul li a:hover,
+.nav-menu ul li a.active {
     background-color: rgba(255, 255, 255, 0.2);
-    transform: translateX(5px);
 }
 
 .profile {
