@@ -27,7 +27,7 @@ We are committed to providing a friendly, safe, and welcoming environment for al
 - Your preferred IDE (IntelliJ IDEA, Eclipse, or VS Code recommended)
 
 ### Repository Setup
-1. Fork the repository: https://github.com/Nadira3/afrikai_apis
+1. Fork the repository: https://github.com/<your-username>/afrikai_apis
 2. Clone your forked repository
    ```bash
    git clone https://github.com/Nadira3/afrikai_apis.git
