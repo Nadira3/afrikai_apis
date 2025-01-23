@@ -60,6 +60,7 @@ public class TaskService implements ITaskService {
 	log.info("File path: {}", file.getAbsolutePath());
 	log.info("File name: {}", file.getName());
         FileInputStream input = new FileInputStream(file);
+	log.info("Done. input was successful");
         MultipartFile multipartFile = new MockMultipartFile(
             file.getName(),
             file.getName(),
@@ -67,8 +68,10 @@ public class TaskService implements ITaskService {
             IOUtils.toByteArray(input)
         );
         
+	log.info("Done. created multipart file");
         // Create request DTO
         DataImportRequest request = new DataImportRequest(multipartFile, clientId, taskId);
+	log.info("Done. created request DTO");
         
         // Send request to Label Service
         return labelServiceClient.importData(request);
