@@ -117,6 +117,10 @@ body {
     margin: 0 auto;
     min-height: 100vh;
     align-items: center;
+    background-image: url('/static/assets/hero-illustration.svg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
 }
 
 .hero-content h1 {

@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let lastScroll = 0;
     window.addEventListener('scroll', () => {
         const navbar = document.querySelector('.navbar');
-        const currentScroll = window.pageYOffset;
+        const currentScroll = window.scrollY;
 
         if (currentScroll <= 0) {
             navbar.classList.remove('scroll-up');

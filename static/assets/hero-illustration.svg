@@ -1,7 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="100%" height="100%">
   <!-- Fonts -->
   <style type="text/css">
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&display=swap');
+        text {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+        }
   </style>
 
   <!-- Definitions for Gradients and Animations -->
@@ -86,63 +89,4 @@
   </g>
 
   <!-- Hero Text Container with Subtle Entrance Animation -->
-  <g>
-    <text x="80" y="200" font-family="Manrope, Arial, sans-serif" font-size="64" font-weight="800" fill="#FFFFFF">
-      <animate 
-        attributeName="opacity" 
-        from="0" 
-        to="1" 
-        dur="1.5s" 
-        fill="freeze"
-      />
-      AfrikAI Tasks
-    </text>
-    <text x="80" y="280" font-family="Manrope, Arial, sans-serif" font-size="32" font-weight="600" fill="#FFB380">
-      <animate 
-        attributeName="opacity" 
-        from="0" 
-        to="1" 
-        dur="1.5s" 
-        begin="0.5s"
-        fill="freeze"
-      />
-      Empowering Opportunities, 
-    </text>
-    <text x="80" y="330" font-family="Manrope, Arial, sans-serif" font-size="32" font-weight="600" fill="#FFB380">
-      <animate 
-        attributeName="opacity" 
-        from="0" 
-        to="1" 
-        dur="1.5s" 
-        begin="1s"
-        fill="freeze"
-      />
-      One Micro-Task at a Time
-    </text>
-  </g>
-
-  <!-- CTA Button with Hover Effect -->
-  <g>
-    <rect x="80" y="400" width="250" height="60" rx="30" fill="#FF6600">
-      <animate 
-        attributeName="opacity" 
-        from="0" 
-        to="1" 
-        dur="1.5s" 
-        begin="1.5s"
-        fill="freeze"
-      />
-    </rect>
-    <text x="130" y="440" font-family="Manrope, Arial, sans-serif" font-size="24" font-weight="600" fill="#FFFFFF">
-      <animate 
-        attributeName="opacity" 
-        from="0" 
-        to="1" 
-        dur="1.5s" 
-        begin="1.5s"
-        fill="freeze"
-      />
-      Get Started
-    </text>
-  </g>
 </svg>
