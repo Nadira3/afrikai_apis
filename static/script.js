@@ -61,19 +61,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Testimonials Slider
     const testimonials = [
         {
-            image: 'assets/testimonial1.jpg',
+            image: 'assets/testimonial_1.jpeg',
             text: "AfrikAI has transformed my life. I can now work from home and earn a stable income.",
             name: "Sarah M.",
             role: "Data Entry Specialist"
         },
         {
-            image: 'assets/testimonial2.jpg',
+            image: 'assets/testimonial_2.jpeg',
             text: "The platform is user-friendly and the tasks are interesting. Great opportunity!",
             name: "John D.",
             role: "Content Reviewer"
         },
         {
-            image: 'assets/testimonial3.jpg',
+            image: 'assets/testimonial_3.jpeg',
             text: "I've learned new skills while earning. The support team is amazing!",
             name: "Maria K.",
             role: "Research Assistant"
