@@ -114,7 +114,7 @@ upload:
 git clone https://github.com/Nadira3/afrikai_apis.git
 
 # Navigate to project directory
-cd afrikai-task-service
+cd task-service 
 
 # Set execute permissions for Maven wrapper
 chmod +x mvnw
@@ -177,7 +177,7 @@ Creates a new task
 {
   "name": "string",
   "category": "string",
-  "priority": "HIGH|MEDIUM|LOW",
+  "priority": "1|2|3",
   "description": "string",
   "files": ["multipart/form-data"]
 }
