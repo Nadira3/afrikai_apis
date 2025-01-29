@@ -14,27 +14,27 @@ The UserService is a core microservice component of the AfrikAI application that
 
 1. Clone the repository:
 ```bash
-git clone <repo-url>
+git clone https://www.github.com/Nadira3/afrikai_apis.git 
 ```
 
 2. Navigate to the service directory:
 ```bash
-cd <service-registry-directory>
+cd user-service
 ```
 
 3. Set proper permissions:
 ```bash
-chmod +x mvn
+chmod +x mvnw
 ```
 
 4. Build and install:
 ```bash
-mvn clean install
+./mvnw clean install
 ```
 
 5. Run the application:
 ```bash
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 
 The service will start on port 8081.
@@ -109,6 +109,8 @@ We welcome contributions to improve the UserService. Please follow these steps:
 3. Commit your changes
 4. Push to your branch
 5. Open a Pull Request
+
+See CONTRIBUTING.md for more details
 
 ## Contact
 Project Maintainer: [Nadira3](https://github.com/Nadira3)
