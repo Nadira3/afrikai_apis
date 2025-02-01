@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Client Dashboard - AfrikAI</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/css/dclient.css">
 </head>
 <body>
   <div class="dashboard">
     <!-- Navigation Menu -->
     <nav class="nav-menu">
-      <img src="assets/logo.png" alt="AfrikAI Logo" class="logo">
+      <img src="/images/logo.png" alt="AfrikAI Logo" class="logo">
       <ul>
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="task-history/task-history.html">Task History</a></li>
-        <li><a href="transaction-history/transaction-history.html">Transaction History</a></li>
-        <li><a href="faq.html">FAQ</a></li>
-        <li><a href="help.html">Help</a></li>
+	      <li><a th:href="@{/}">Dashboard</a></li>
+	      <li><a th:href="@{/task-history}">Task History</a></li>
+	      <li><a th:href="@{/transaction-history}">Transaction History</a></li>
+	      <li><a th:href="@{/faq}">FAQ</a></li>
+	      <li><a th:href="@{/help}">Help</a></li>
       </ul>
       <div class="profile">
         <span>John Doe</span>
@@ -75,6 +75,6 @@
       </section>
     </div>
   </div>
-  <script src="script.js"></script>
+  <script src="/js/dclient.js"></script>
 </body>
 </html>

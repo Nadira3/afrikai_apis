@@ -1,0 +1,324 @@
+/* Base Reset and Typography */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.dashboard {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Navigation Menu */
+.nav-menu {
+    width: 280px;
+    background-color: #FF6600;
+    color: white;
+    padding: 2rem;
+    position: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    width: 150px;
+    margin-bottom: 3rem;
+}
+
+.nav-menu ul {
+    list-style: none;
+    margin-bottom: auto;
+}
+
+.nav-menu ul li {
+    margin-bottom: 1rem;
+}
+
+.nav-menu ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.nav-menu ul li a:hover,
+.nav-menu ul li a.active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.profile {
+    padding-top: 2.5rem; /* Slightly increased top padding */
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    text-align: center;
+    margin-top: 2rem; /* Added space above the profile section */
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 280px;
+    padding: 2rem;
+}
+
+/* Task Overview Section */
+.task-overview {
+    margin-bottom: 2.5rem;
+}
+
+.task-overview h2 {
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+    font-size: 1.5rem;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card h3 {
+    color: #4a5568;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.card p {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #FF6600;
+}
+
+/* Task Categories */
+.task-categories {
+    margin-bottom: 2.5rem;
+}
+
+.task-categories h2 {
+    margin-bottom: 1.5rem;
+    color: #2d3748;
+    font-size: 1.5rem;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.category {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.category:hover {
+    background: #FF6600;
+    color: white;
+    transform: scale(1.02);
+}
+
+.category h3 {
+    font-size: 1.2rem;
+}
+
+/* Upload Task CTA */
+.cta {
+    text-align: center;
+    margin: 2.5rem 0;
+}
+
+.upload-btn {
+    background-color: #FF6600;
+    color: white;
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(255, 102, 0, 0.2);
+}
+
+.upload-btn:hover {
+    background-color: #e65c00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255, 102, 0, 0.3);
+}
+
+/* Payment Link Section */
+.payment-link {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2.5rem;
+    text-align: center;
+}
+
+.payment-link h2 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.payment-link p {
+    color: #4a5568;
+    margin-bottom: 1.5rem;
+}
+
+.payment-btn {
+    background-color: #FF6600;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+.payment-btn:hover {
+    background-color: #e65c00;
+    transform: translateY(-2px);
+}
+
+/* Wallet Balance */
+.wallet-balance {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.wallet-balance h2 {
+    color: #2d3748;
+    margin-bottom: 1rem;
+}
+
+.wallet-balance p {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #FF6600;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .nav-menu {
+        width: 80px;
+        padding: 1.5rem 1rem;
+    }
+    
+    .nav-menu .logo {
+        width: 40px;
+    }
+    
+    .nav-menu ul li a span,
+    .profile span {
+        display: none;
+    }
+    
+    .main-content {
+        margin-left: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard {
+        flex-direction: column;
+    }
+    
+    .nav-menu {
+        width: 100%;
+        height: auto;
+        position: static;
+        padding: 1rem;
+    }
+    
+    .nav-menu ul {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
+    
+    .nav-menu ul li {
+        margin: 0 0.5rem;
+    }
+    
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    
+    .cards,
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card,
+.category,
+.payment-link,
+.wallet-balance {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #FF6600;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #e65c00;
+}

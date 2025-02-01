@@ -66,4 +66,5 @@ public class RouterConfig {
                 .map(token -> userServiceClient.validateToken(token))
                 .flatMap(response -> ServerResponse.ok().bodyValue(response)));
     }
+    
 }

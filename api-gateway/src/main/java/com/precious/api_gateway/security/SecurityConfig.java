@@ -25,13 +25,19 @@ public class SecurityConfig {
             .csrf(ServerHttpSecurity.CsrfSpec::disable) // Disable CSRF
             .authorizeExchange(exchanges -> exchanges
 		.pathMatchers(
+			"",
+			"/",
+			"/templates/**",
+			"/css/**",
+			"/js/**",
+			"/images/**",
 			"/swagger-ui/**",
-			"/swagger-ui.html/**",
+			"/swagger-ui.html",
 			"/webjars/**",
 			"/v3/api-docs/**",
+			"/login",
 			"/api/auth/**"
-			)
-		.permitAll() // Allow access to the Swagger UI and the authentication endpoint
+		).permitAll() // Allow access to the Swagger UI and the authentication endpoint
                 .anyExchange().authenticated() // Require authentication for all other requests
             )
             .addFilterAt(jwtAuthenticationFilter(), SecurityWebFiltersOrder.AUTHENTICATION)

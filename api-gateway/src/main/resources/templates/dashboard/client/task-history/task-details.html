@@ -1,20 +1,21 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Task Details</title>
-  <link rel="stylesheet" href="task-details.css">
+  <link rel="stylesheet" href="/css/task-details.css">
 </head>
 <body>
   <div class="dashboard-layout">
     <!-- Side Navigation -->
     <nav class="header-nav">
       <ul>
-        <li><a href="../index.html">Dashboard</a></li>
-        <li><a href="task-history.html">Task History</a></li>
-        <li><a href="payment.html">Payment</a></li>
-        <li><a href="faq.html">FAQ</a></li>
+	      <li><a th:href="@{/client}">Dashboard</a></li>
+	      <li><a th:href="@{/client/task-history}">Task History</a></li>
+	      <li><a th:href="@{/client/transaction-history}">Payment</a></li>
+	      <li><a th:href="@{/faq}">FAQ</a></li>
       </ul>
     </nav>
     
