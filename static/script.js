@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.login-btn, .signup-btn, .primary-btn').forEach(button => {
         button.addEventListener('click', () => {
             // Redirect to auth page
-            window.location.href = '/auth.html';
+            window.location.href = 'login.html';
         });
     });
 });
