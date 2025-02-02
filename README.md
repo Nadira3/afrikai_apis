@@ -300,7 +300,7 @@ User Service manages authentication, user details, and JWT generation.
 
 6. Submit a Pull Request.
 
-
+Read CONTRIBUTING.md for more details
 
 
 ---
